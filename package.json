@@ -1,0 +1,120 @@
+{
+  "name": "ai-commit-assistant",
+  "displayName": "AI Commit Assistant",
+  "description": "Generate Conventional Commits messages from your git staged diff using Claude or OpenAI.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "SCM Providers",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:aiCommitAssistant.generateCommitMessage",
+    "onCommand:aiCommitAssistant.setAnthropicApiKey",
+    "onCommand:aiCommitAssistant.setOpenAIApiKey"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aiCommitAssistant.generateCommitMessage",
+        "title": "AI Commit Assistant: Generate Commit Message",
+        "category": "AI Commit Assistant",
+        "icon": {
+          "light": "resources/sparkle-light.svg",
+          "dark": "resources/sparkle-dark.svg"
+        }
+      },
+      {
+        "command": "aiCommitAssistant.setAnthropicApiKey",
+        "title": "AI Commit Assistant: Set Anthropic API Key",
+        "category": "AI Commit Assistant"
+      },
+      {
+        "command": "aiCommitAssistant.setOpenAIApiKey",
+        "title": "AI Commit Assistant: Set OpenAI API Key",
+        "category": "AI Commit Assistant"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "aiCommitAssistant.generateCommitMessage",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AI Commit Assistant",
+      "properties": {
+        "aiCommitAssistant.provider": {
+          "type": "string",
+          "default": "anthropic",
+          "enum": ["anthropic", "openai"],
+          "description": "Which AI provider to use."
+        },
+        "aiCommitAssistant.autoStage": {
+          "type": "boolean",
+          "default": true,
+          "description": "Stage changes before generating the commit message."
+        },
+        "aiCommitAssistant.temperature": {
+          "type": "number",
+          "default": 0.2,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Sampling temperature."
+        },
+        "aiCommitAssistant.maxTokens": {
+          "type": "number",
+          "default": 200,
+          "minimum": 64,
+          "maximum": 4096,
+          "description": "Maximum tokens to generate for the commit message."
+        },
+        "aiCommitAssistant.diff.maxChars": {
+          "type": "number",
+          "default": 35000,
+          "minimum": 2000,
+          "description": "Max characters of `git diff --cached` to send to the model (the diff will be truncated)."
+        },
+        "aiCommitAssistant.anthropic.model": {
+          "type": "string",
+          "default": "claude-3-5-sonnet-20241022",
+          "description": "Anthropic model name."
+        },
+        "aiCommitAssistant.anthropic.baseUrl": {
+          "type": "string",
+          "default": "https://api.anthropic.com",
+          "description": "Anthropic API base URL."
+        },
+        "aiCommitAssistant.openai.model": {
+          "type": "string",
+          "default": "gpt-3.5-turbo",
+          "description": "OpenAI model name."
+        },
+        "aiCommitAssistant.openai.baseUrl": {
+          "type": "string",
+          "default": "https://api.openai.com",
+          "description": "OpenAI API base URL."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^2.26.0",
+    "typescript": "^5.4.0"
+  }
+}
