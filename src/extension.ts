@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as path from "node:path";
 import { getRepoRoot, gitAddAll, gitDiffCached, gitDiffNumstat } from "./git";
 import { buildUserPrompt, SYSTEM_PROMPT } from "./prompt";
 import { generateCommitMessage } from "./providers";
@@ -102,7 +103,7 @@ async function generate(context: vscode.ExtensionContext) {
         }
 
         // Fill the Source Control commit message input.
-        vscode.scm.inputBox.value = cleaned;
+        await setCommitInputBoxValue(repoRoot, cleaned);
         vscode.window.showInformationMessage("Davinci AI Smart Commiter: Commit message generated.");
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -124,4 +125,37 @@ async function resolveApiKey(context: vscode.ExtensionContext, provider: Provide
 
   const env = process.env.OPENAI_API_KEY || process.env.AI_COMMIT_OPENAI_API_KEY;
   return env?.trim() || undefined;
+}
+
+type GitExtensionApi = {
+  repositories: Array<{
+    rootUri: vscode.Uri;
+    inputBox: { value: string };
+  }>;
+};
+
+async function setCommitInputBoxValue(repoRoot: string, value: string): Promise<void> {
+  // Prefer the global SCM input box when available.
+  const anyScm = vscode.scm as unknown as { inputBox?: { value: string } } | undefined;
+  if (anyScm?.inputBox) {
+    anyScm.inputBox.value = value;
+    return;
+  }
+
+  // Fallback: use the built-in Git extension API (per-repository input box).
+  const gitExt = vscode.extensions.getExtension("vscode.git");
+  if (!gitExt) {
+    throw new Error("Unable to access VS Code Git extension to set the commit message.");
+  }
+  if (!gitExt.isActive) {
+    await gitExt.activate();
+  }
+
+  const api = (gitExt.exports as { getAPI?: (version: number) => GitExtensionApi }).getAPI?.(1);
+  const repo = api?.repositories?.find((r) => path.resolve(r.rootUri.fsPath) === path.resolve(repoRoot));
+  if (!repo?.inputBox) {
+    throw new Error("Unable to find an active Git repository input box to set the commit message.");
+  }
+
+  repo.inputBox.value = value;
 }
