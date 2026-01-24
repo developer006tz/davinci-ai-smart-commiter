@@ -5,7 +5,7 @@ export const SYSTEM_PROMPT = [
   "Use imperative mood, keep it concise, and avoid trailing period.",
   "If scope is unknown, omit it.",
   "Choose the most accurate type: feat, fix, docs, refactor, perf, test, build, ci, chore, revert.",
-  "Subject should be <= 72 characters when possible.",
+  "Subject should be <= 90 characters most of the time and  when more long message needed dont exceed 130 characters.",
 ].join("\n");
 
 export function buildUserPrompt(input: { numstat: string; diff: string }): string {
