@@ -3,11 +3,11 @@ src/**
 **/*.map
 tsconfig.json
 *.ts
+.gitignore
 node_modules/**
 !out/**
 !package.json
 !README.md
 !CHANGELOG.md
 !LICENSE
-resources/**
-
+!resources/**
