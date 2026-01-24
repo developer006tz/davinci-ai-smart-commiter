@@ -2,7 +2,7 @@
 
 Generate Conventional Commits messages from your staged git diff using:
 
-- Anthropic Claude (`claude-3-5-sonnet-20241022` by default)
+- Anthropic Claude (`claude-3-haiku-20240307` by default)
 - OpenAI (`gpt-3.5-turbo` by default)
 
 ## Usage

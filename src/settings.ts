@@ -11,7 +11,7 @@ export function getConfig() {
     maxTokens: cfg.get<number>("maxTokens", 200),
     diffMaxChars: cfg.get<number>("diff.maxChars", 35000),
     anthropic: {
-      model: cfg.get<string>("anthropic.model", "claude-3-5-sonnet-20241022"),
+      model: cfg.get<string>("anthropic.model", "claude-3-haiku-20240307"),
       baseUrl: cfg.get<string>("anthropic.baseUrl", "https://api.anthropic.com"),
     },
     openai: {
@@ -20,4 +20,3 @@ export function getConfig() {
     },
   };
 }
-

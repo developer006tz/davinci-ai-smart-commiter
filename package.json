@@ -88,7 +88,7 @@
         },
         "aiCommitAssistant.anthropic.model": {
           "type": "string",
-          "default": "claude-3-5-sonnet-20241022",
+          "default": "claude-3-haiku-20240307",
           "description": "Anthropic model name."
         },
         "aiCommitAssistant.anthropic.baseUrl": {
