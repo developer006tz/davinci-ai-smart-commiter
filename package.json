@@ -1,9 +1,13 @@
 {
-  "name": "ai-commit-assistant",
-  "displayName": "AI Commit Assistant",
-  "description": "Generate Conventional Commits messages from your git staged diff using Claude or OpenAI.",
+  "name": "davinci-ai-smart-commiter",
+  "displayName": "Davinci AI Smart Commiter",
+  "description": "Generate Conventional Commits messages from your staged git diff using Claude or OpenAI.",
   "version": "0.0.1",
   "publisher": "local",
+  "author": {
+    "name": "Ludovick Konyo",
+    "email": "developer@socialsmarttech.com"
+  },
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
@@ -22,8 +26,8 @@
     "commands": [
       {
         "command": "aiCommitAssistant.generateCommitMessage",
-        "title": "AI Commit Assistant: Generate Commit Message",
-        "category": "AI Commit Assistant",
+        "title": "Davinci AI Smart Commiter: Generate Commit Message",
+        "category": "Davinci AI Smart Commiter",
         "icon": {
           "light": "resources/sparkle-light.svg",
           "dark": "resources/sparkle-dark.svg"
@@ -31,13 +35,13 @@
       },
       {
         "command": "aiCommitAssistant.setAnthropicApiKey",
-        "title": "AI Commit Assistant: Set Anthropic API Key",
-        "category": "AI Commit Assistant"
+        "title": "Davinci AI Smart Commiter: Set Anthropic API Key",
+        "category": "Davinci AI Smart Commiter"
       },
       {
         "command": "aiCommitAssistant.setOpenAIApiKey",
-        "title": "AI Commit Assistant: Set OpenAI API Key",
-        "category": "AI Commit Assistant"
+        "title": "Davinci AI Smart Commiter: Set OpenAI API Key",
+        "category": "Davinci AI Smart Commiter"
       }
     ],
     "menus": {
@@ -49,7 +53,7 @@
       ]
     },
     "configuration": {
-      "title": "AI Commit Assistant",
+      "title": "Davinci AI Smart Commiter",
       "properties": {
         "aiCommitAssistant.provider": {
           "type": "string",

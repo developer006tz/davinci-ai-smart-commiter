@@ -1,4 +1,4 @@
-# AI Commit Assistant (VS Code Extension)
+# Davinci AI Smart Commiter (VS Code Extension)
 
 Generate Conventional Commits messages from your staged git diff using:
 
@@ -9,7 +9,7 @@ Generate Conventional Commits messages from your staged git diff using:
 
 1. Make changes to your code.
 2. Open Source Control.
-3. Click the sparkle button in the Source Control toolbar (or run `AI Commit Assistant: Generate Commit Message`).
+3. Click the sparkle button in the Source Control toolbar (or run `Davinci AI Smart Commiter: Generate Commit Message`).
 4. The extension will:
    - `git add -A` (if enabled)
    - read `git diff --cached` + `--numstat`
@@ -20,8 +20,8 @@ Generate Conventional Commits messages from your staged git diff using:
 
 Set your API key (stored in VS Code Secret Storage):
 
-- `AI Commit Assistant: Set Anthropic API Key`
-- `AI Commit Assistant: Set OpenAI API Key`
+- `Davinci AI Smart Commiter: Set Anthropic API Key`
+- `Davinci AI Smart Commiter: Set OpenAI API Key`
 
 Environment variable fallbacks:
 
@@ -30,5 +30,8 @@ Environment variable fallbacks:
 
 ## Configuration
 
-See `Settings` -> `AI Commit Assistant`.
+See `Settings` -> `Davinci AI Smart Commiter`.
 
+## Author
+
+Ludovick Konyo (`developer@socialsmarttech.com`)

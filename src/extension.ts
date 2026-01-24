@@ -35,13 +35,13 @@ async function setApiKey(context: vscode.ExtensionContext, provider: ProviderNam
   });
   if (!value) return;
   await context.secrets.store(SECRET_KEYS[provider], value.trim());
-  vscode.window.showInformationMessage("AI Commit Assistant: API key saved.");
+  vscode.window.showInformationMessage("Davinci AI Smart Commiter: API key saved.");
 }
 
 async function generate(context: vscode.ExtensionContext) {
   const folder = vscode.workspace.workspaceFolders?.[0];
   if (!folder) {
-    vscode.window.showErrorMessage("AI Commit Assistant: Open a workspace folder first.");
+    vscode.window.showErrorMessage("Davinci AI Smart Commiter: Open a workspace folder first.");
     return;
   }
 
@@ -49,7 +49,7 @@ async function generate(context: vscode.ExtensionContext) {
 
   const repoRoot = await getRepoRoot(folder.uri.fsPath);
   if (!repoRoot) {
-    vscode.window.showErrorMessage("AI Commit Assistant: This workspace is not a git repository.");
+    vscode.window.showErrorMessage("Davinci AI Smart Commiter: This workspace is not a git repository.");
     return;
   }
 
@@ -58,14 +58,14 @@ async function generate(context: vscode.ExtensionContext) {
   if (!apiKey) {
     const msg =
       provider === "anthropic"
-        ? "AI Commit Assistant: Missing Anthropic API key. Run “AI Commit Assistant: Set Anthropic API Key”."
-        : "AI Commit Assistant: Missing OpenAI API key. Run “AI Commit Assistant: Set OpenAI API Key”.";
+        ? "Davinci AI Smart Commiter: Missing Anthropic API key. Run “Davinci AI Smart Commiter: Set Anthropic API Key”."
+        : "Davinci AI Smart Commiter: Missing OpenAI API key. Run “Davinci AI Smart Commiter: Set OpenAI API Key”.";
     vscode.window.showErrorMessage(msg);
     return;
   }
 
   await vscode.window.withProgress(
-    { location: vscode.ProgressLocation.SourceControl, title: "AI Commit Assistant", cancellable: false },
+    { location: vscode.ProgressLocation.SourceControl, title: "Davinci AI Smart Commiter", cancellable: false },
     async () => {
       try {
         if (config.autoStage) {
@@ -75,7 +75,7 @@ async function generate(context: vscode.ExtensionContext) {
         const numstat = await gitDiffNumstat(repoRoot);
         const diff = await gitDiffCached(repoRoot, config.diffMaxChars);
         if (!diff.trim()) {
-          vscode.window.showInformationMessage("AI Commit Assistant: No staged changes found.");
+          vscode.window.showInformationMessage("Davinci AI Smart Commiter: No staged changes found.");
           return;
         }
 
@@ -97,16 +97,16 @@ async function generate(context: vscode.ExtensionContext) {
           cleaned = cleaned.slice(1, -1).trim();
         }
         if (!cleaned) {
-          vscode.window.showErrorMessage("AI Commit Assistant: Provider returned an empty commit message.");
+          vscode.window.showErrorMessage("Davinci AI Smart Commiter: Provider returned an empty commit message.");
           return;
         }
 
         // Fill the Source Control commit message input.
         vscode.scm.inputBox.value = cleaned;
-        vscode.window.showInformationMessage("AI Commit Assistant: Commit message generated.");
+        vscode.window.showInformationMessage("Davinci AI Smart Commiter: Commit message generated.");
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        vscode.window.showErrorMessage(`AI Commit Assistant: ${msg}`);
+        vscode.window.showErrorMessage(`Davinci AI Smart Commiter: ${msg}`);
       }
     },
   );
