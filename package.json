@@ -8,6 +8,10 @@
     "name": "Ludovick Konyo",
     "email": "developer@socialsmarttech.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/socialsmarttech/davinci-ai-smart-commiter"
+  },
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
