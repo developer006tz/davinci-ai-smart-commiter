@@ -2,7 +2,7 @@
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
   "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "local",
   "author": {
     "name": "Ludovick Konyo",

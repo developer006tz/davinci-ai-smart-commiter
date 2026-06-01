@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.6
+
+- Add DOM lib typings so VS Code resolves the global `fetch` API in provider code.
+
 ## 0.0.5
 
 - Fix Kimi K2.6/K2.5 commit generation by disabling thinking mode for short commit-message requests.
