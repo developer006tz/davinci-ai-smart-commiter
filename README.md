@@ -3,7 +3,7 @@
 Generate Conventional Commits messages from your staged git diff using:
 
 - Anthropic Claude (`claude-3-haiku-20240307` by default)
-- OpenAI (`gpt-3.5-turbo` by default)
+- OpenAI (`gpt-4o-mini` by default)
 - Kimi/Moonshot (`kimi-k2.6` by default)
 - DeepSeek (`deepseek-v4-flash` by default)
 - Google Gemini (`gemini-2.5-flash` by default)
@@ -41,6 +41,8 @@ Environment variable fallbacks:
 ## Configuration
 
 See `Settings` -> `Davinci AI Smart Commiter`.
+
+Start with `Ai Commit Assistant: Provider`, then adjust only that provider's model/base URL if needed. API keys are stored securely through the `Set ... API Key` commands instead of plain Settings JSON.
 
 Useful context settings:
 

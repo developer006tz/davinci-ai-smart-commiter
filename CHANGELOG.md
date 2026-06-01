@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.3
+
+- Improve Settings UI ordering, labels, and descriptions for easier provider setup.
+- Update OpenAI default model to `gpt-4o-mini` and default max tokens to `360`.
+
 ## 0.0.2
 
 - Add Kimi/Moonshot, DeepSeek, and Google Gemini provider integrations.

@@ -8,7 +8,7 @@ export function getConfig() {
     provider: cfg.get<ProviderName>("provider", "anthropic"),
     autoStage: cfg.get<boolean>("autoStage", true),
     temperature: cfg.get<number>("temperature", 0.2),
-    maxTokens: cfg.get<number>("maxTokens", 200),
+    maxTokens: cfg.get<number>("maxTokens", 360),
     diffMaxChars: cfg.get<number>("diff.maxChars", 35000),
     contextMaxFiles: cfg.get<number>("context.maxFiles", 6),
     contextMaxChars: cfg.get<number>("context.maxChars", 12000),
@@ -18,7 +18,7 @@ export function getConfig() {
       baseUrl: cfg.get<string>("anthropic.baseUrl", "https://api.anthropic.com"),
     },
     openai: {
-      model: cfg.get<string>("openai.model", "gpt-3.5-turbo"),
+      model: cfg.get<string>("openai.model", "gpt-4o-mini"),
       baseUrl: cfg.get<string>("openai.baseUrl", "https://api.openai.com"),
     },
     kimi: {
