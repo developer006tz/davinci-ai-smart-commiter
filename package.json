@@ -2,7 +2,7 @@
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
   "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "local",
   "author": {
     "name": "Ludovick Konyo",
@@ -232,23 +232,26 @@
           "enum": [
             "kimi-k2.6",
             "kimi-k2.5",
-            "kimi-k2-thinking",
-            "kimi-k2-turbo-preview"
+            "moonshot-v1-8k",
+            "moonshot-v1-32k",
+            "moonshot-v1-128k"
           ],
           "enumItemLabels": [
             "Kimi K2.6",
             "Kimi K2.5",
-            "Kimi K2 Thinking",
-            "Kimi K2 Turbo Preview"
+            "Moonshot V1 8K",
+            "Moonshot V1 32K",
+            "Moonshot V1 128K"
           ],
           "markdownEnumDescriptions": [
             "Latest Kimi coding and agent model.",
-            "Versatile multimodal Kimi model.",
-            "Deep reasoning model.",
-            "Preview fast K2 variant."
+            "Previous Kimi K2 multimodal model.",
+            "Short text generation model.",
+            "Longer text generation model.",
+            "Very long context text generation model."
           ],
           "order": 40,
-          "markdownDescription": "Kimi/Moonshot model used when provider is `kimi`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
+          "markdownDescription": "Kimi/Moonshot model used when provider is `kimi`. For `kimi-k2.6` and `kimi-k2.5`, the extension disables thinking for commit-message generation so the API returns a normal final message."
         },
         "aiCommitAssistant.kimi.baseUrl": {
           "type": "string",

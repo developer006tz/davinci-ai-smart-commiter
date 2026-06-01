@@ -45,6 +45,8 @@ See `Settings` -> `Davinci AI Smart Commiter`.
 
 Start with `Davinci AI Smart Commiter: Setup Provider, Model, and API Key`. In Settings, provider and model fields are dropdowns, so normal setup does not require typing model names manually. API keys are stored securely through the `Set ... API Key` commands instead of plain Settings JSON.
 
+Kimi note: for `kimi-k2.6` and `kimi-k2.5`, the extension disables thinking mode when generating commit messages. Kimi enables thinking by default, which can consume the short commit-message token budget before returning final `content`.
+
 Useful context settings:
 
 - `aiCommitAssistant.context.maxFiles`

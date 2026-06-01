@@ -22,9 +22,10 @@ export const PROVIDER_MODELS: Record<ProviderName, ModelChoice[]> = {
   ],
   kimi: [
     { id: "kimi-k2.6", label: "Kimi K2.6", description: "Latest Kimi coding and agent model" },
-    { id: "kimi-k2.5", label: "Kimi K2.5", description: "Versatile multimodal Kimi model" },
-    { id: "kimi-k2-thinking", label: "Kimi K2 Thinking", description: "Deep reasoning model" },
-    { id: "kimi-k2-turbo-preview", label: "Kimi K2 Turbo Preview", description: "Preview fast K2 variant" },
+    { id: "kimi-k2.5", label: "Kimi K2.5", description: "Previous Kimi K2 multimodal model" },
+    { id: "moonshot-v1-8k", label: "Moonshot V1 8K", description: "Short text generation model" },
+    { id: "moonshot-v1-32k", label: "Moonshot V1 32K", description: "Longer text generation model" },
+    { id: "moonshot-v1-128k", label: "Moonshot V1 128K", description: "Very long context text generation model" },
   ],
   deepseek: [
     { id: "deepseek-v4-flash", label: "DeepSeek V4 Flash", description: "Default fast model" },

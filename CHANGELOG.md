@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.5
+
+- Fix Kimi K2.6/K2.5 commit generation by disabling thinking mode for short commit-message requests.
+- Stop sending custom temperature for Kimi K2.6/K2.5 because those models use fixed values.
+- Refresh Kimi model dropdown to current supported models and remove deprecated K2 entries.
+- Improve OpenAI-compatible provider errors when a response has no final message content.
+
 ## 0.0.4
 
 - Add setup commands for selecting provider, model, and API key from VS Code quick picks.
