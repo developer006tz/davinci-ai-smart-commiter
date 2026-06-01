@@ -14,7 +14,7 @@ export function getConfig() {
     contextMaxChars: cfg.get<number>("context.maxChars", 12000),
     contextMaxCharsPerFile: cfg.get<number>("context.maxCharsPerFile", 4000),
     anthropic: {
-      model: cfg.get<string>("anthropic.model", "claude-3-haiku-20240307"),
+      model: cfg.get<string>("anthropic.model", "claude-haiku-4-5-20251001"),
       baseUrl: cfg.get<string>("anthropic.baseUrl", "https://api.anthropic.com"),
     },
     openai: {

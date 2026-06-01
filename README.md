@@ -2,7 +2,7 @@
 
 Generate Conventional Commits messages from your staged git diff using:
 
-- Anthropic Claude (`claude-3-haiku-20240307` by default)
+- Anthropic Claude (`claude-haiku-4-5-20251001` by default)
 - OpenAI (`gpt-4o-mini` by default)
 - Kimi/Moonshot (`kimi-k2.6` by default)
 - DeepSeek (`deepseek-v4-flash` by default)
@@ -24,6 +24,7 @@ Generate Conventional Commits messages from your staged git diff using:
 
 Set your API key (stored in VS Code Secret Storage):
 
+- `Davinci AI Smart Commiter: Setup Provider, Model, and API Key`
 - `Davinci AI Smart Commiter: Set Anthropic API Key`
 - `Davinci AI Smart Commiter: Set OpenAI API Key`
 - `Davinci AI Smart Commiter: Set Kimi API Key`
@@ -42,7 +43,7 @@ Environment variable fallbacks:
 
 See `Settings` -> `Davinci AI Smart Commiter`.
 
-Start with `Ai Commit Assistant: Provider`, then adjust only that provider's model/base URL if needed. API keys are stored securely through the `Set ... API Key` commands instead of plain Settings JSON.
+Start with `Davinci AI Smart Commiter: Setup Provider, Model, and API Key`. In Settings, provider and model fields are dropdowns, so normal setup does not require typing model names manually. API keys are stored securely through the `Set ... API Key` commands instead of plain Settings JSON.
 
 Useful context settings:
 

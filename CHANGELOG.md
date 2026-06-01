@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.4
+
+- Add setup commands for selecting provider, model, and API key from VS Code quick picks.
+- Convert provider model settings from free text inputs to dropdown selections.
+- Refresh default Anthropic model to `claude-haiku-4-5-20251001`.
+
 ## 0.0.3
 
 - Improve Settings UI ordering, labels, and descriptions for easier provider setup.

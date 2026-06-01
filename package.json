@@ -2,7 +2,7 @@
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
   "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "local",
   "author": {
     "name": "Ludovick Konyo",
@@ -22,6 +22,9 @@
   ],
   "activationEvents": [
     "onCommand:aiCommitAssistant.generateCommitMessage",
+    "onCommand:aiCommitAssistant.setup",
+    "onCommand:aiCommitAssistant.selectProvider",
+    "onCommand:aiCommitAssistant.selectModel",
     "onCommand:aiCommitAssistant.setAnthropicApiKey",
     "onCommand:aiCommitAssistant.setOpenAIApiKey",
     "onCommand:aiCommitAssistant.setKimiApiKey",
@@ -39,6 +42,21 @@
           "light": "resources/sparkle-light.svg",
           "dark": "resources/sparkle-dark.svg"
         }
+      },
+      {
+        "command": "aiCommitAssistant.setup",
+        "title": "Davinci AI Smart Commiter: Setup Provider, Model, and API Key",
+        "category": "Davinci AI Smart Commiter"
+      },
+      {
+        "command": "aiCommitAssistant.selectProvider",
+        "title": "Davinci AI Smart Commiter: Select Default Provider",
+        "category": "Davinci AI Smart Commiter"
+      },
+      {
+        "command": "aiCommitAssistant.selectModel",
+        "title": "Davinci AI Smart Commiter: Select Default Model",
+        "category": "Davinci AI Smart Commiter"
       },
       {
         "command": "aiCommitAssistant.setAnthropicApiKey",
@@ -147,9 +165,27 @@
         },
         "aiCommitAssistant.anthropic.model": {
           "type": "string",
-          "default": "claude-3-haiku-20240307",
+          "default": "claude-haiku-4-5-20251001",
+          "enum": [
+            "claude-haiku-4-5-20251001",
+            "claude-sonnet-4-6",
+            "claude-opus-4-7",
+            "claude-3-haiku-20240307"
+          ],
+          "enumItemLabels": [
+            "Claude Haiku 4.5",
+            "Claude Sonnet 4.6",
+            "Claude Opus 4.7",
+            "Claude 3 Haiku"
+          ],
+          "markdownEnumDescriptions": [
+            "Fast and cost-effective.",
+            "Balanced speed and intelligence.",
+            "Highest capability.",
+            "Legacy fast model."
+          ],
           "order": 20,
-          "markdownDescription": "Anthropic model name used when provider is `anthropic`."
+          "markdownDescription": "Anthropic model used when provider is `anthropic`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
         },
         "aiCommitAssistant.anthropic.baseUrl": {
           "type": "string",
@@ -160,8 +196,29 @@
         "aiCommitAssistant.openai.model": {
           "type": "string",
           "default": "gpt-4o-mini",
+          "enum": [
+            "gpt-4o-mini",
+            "gpt-5.4-mini",
+            "gpt-5.4-nano",
+            "gpt-5.4",
+            "gpt-5.5"
+          ],
+          "enumItemLabels": [
+            "GPT-4o mini",
+            "GPT-5.4 mini",
+            "GPT-5.4 nano",
+            "GPT-5.4",
+            "GPT-5.5"
+          ],
+          "markdownEnumDescriptions": [
+            "Fast, affordable, reliable for commit messages.",
+            "Stronger coding model, lower cost than flagship.",
+            "Lowest latency and cost.",
+            "Higher capability.",
+            "Flagship coding and professional work model."
+          ],
           "order": 30,
-          "markdownDescription": "OpenAI model name used when provider is `openai`."
+          "markdownDescription": "OpenAI model used when provider is `openai`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
         },
         "aiCommitAssistant.openai.baseUrl": {
           "type": "string",
@@ -172,8 +229,26 @@
         "aiCommitAssistant.kimi.model": {
           "type": "string",
           "default": "kimi-k2.6",
+          "enum": [
+            "kimi-k2.6",
+            "kimi-k2.5",
+            "kimi-k2-thinking",
+            "kimi-k2-turbo-preview"
+          ],
+          "enumItemLabels": [
+            "Kimi K2.6",
+            "Kimi K2.5",
+            "Kimi K2 Thinking",
+            "Kimi K2 Turbo Preview"
+          ],
+          "markdownEnumDescriptions": [
+            "Latest Kimi coding and agent model.",
+            "Versatile multimodal Kimi model.",
+            "Deep reasoning model.",
+            "Preview fast K2 variant."
+          ],
           "order": 40,
-          "markdownDescription": "Kimi/Moonshot model name used when provider is `kimi`."
+          "markdownDescription": "Kimi/Moonshot model used when provider is `kimi`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
         },
         "aiCommitAssistant.kimi.baseUrl": {
           "type": "string",
@@ -184,8 +259,26 @@
         "aiCommitAssistant.deepseek.model": {
           "type": "string",
           "default": "deepseek-v4-flash",
+          "enum": [
+            "deepseek-v4-flash",
+            "deepseek-v4-pro",
+            "deepseek-chat",
+            "deepseek-reasoner"
+          ],
+          "enumItemLabels": [
+            "DeepSeek V4 Flash",
+            "DeepSeek V4 Pro",
+            "DeepSeek Chat",
+            "DeepSeek Reasoner"
+          ],
+          "markdownEnumDescriptions": [
+            "Default fast model.",
+            "Stronger reasoning/coding model.",
+            "Legacy alias, deprecated after 2026-07-24.",
+            "Legacy reasoning alias, deprecated after 2026-07-24."
+          ],
           "order": 50,
-          "markdownDescription": "DeepSeek model name used when provider is `deepseek`."
+          "markdownDescription": "DeepSeek model used when provider is `deepseek`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
         },
         "aiCommitAssistant.deepseek.baseUrl": {
           "type": "string",
@@ -196,8 +289,23 @@
         "aiCommitAssistant.gemini.model": {
           "type": "string",
           "default": "gemini-2.5-flash",
+          "enum": [
+            "gemini-2.5-flash",
+            "gemini-2.5-flash-lite",
+            "gemini-2.5-pro"
+          ],
+          "enumItemLabels": [
+            "Gemini 2.5 Flash",
+            "Gemini 2.5 Flash-Lite",
+            "Gemini 2.5 Pro"
+          ],
+          "markdownEnumDescriptions": [
+            "Best price-performance default.",
+            "Fastest and most budget-friendly 2.5 model.",
+            "More advanced reasoning and coding."
+          ],
           "order": 60,
-          "markdownDescription": "Google Gemini model name used when provider is `gemini`."
+          "markdownDescription": "Google Gemini model used when provider is `gemini`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
         },
         "aiCommitAssistant.gemini.baseUrl": {
           "type": "string",

@@ -4,6 +4,7 @@ import { getRepoRoot, gitAddAll, gitDiffCached, gitDiffNumstat, gitStagedFileCon
 import { buildUserPrompt, SYSTEM_PROMPT } from "./prompt";
 import { generateCommitMessage } from "./providers";
 import { getConfig, type ProviderName } from "./settings";
+import { PROVIDER_MODELS, isKnownModel } from "./models";
 
 const SECRET_KEYS = {
   anthropic: "aiCommitAssistant.anthropicApiKey",
@@ -21,8 +22,19 @@ const PROVIDER_LABELS: Record<ProviderName, string> = {
   gemini: "Gemini",
 };
 
+const PROVIDERS: ProviderName[] = ["anthropic", "openai", "kimi", "deepseek", "gemini"];
+
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
+    vscode.commands.registerCommand("aiCommitAssistant.setup", async () => {
+      await setupProvider(context);
+    }),
+    vscode.commands.registerCommand("aiCommitAssistant.selectProvider", async () => {
+      await selectProvider();
+    }),
+    vscode.commands.registerCommand("aiCommitAssistant.selectModel", async () => {
+      await selectModelForCurrentProvider();
+    }),
     vscode.commands.registerCommand("aiCommitAssistant.setAnthropicApiKey", async () => {
       await setApiKey(context, "anthropic");
     }),
@@ -46,6 +58,56 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {}
 
+async function setupProvider(context: vscode.ExtensionContext) {
+  const provider = await pickProvider(getConfig().provider);
+  if (!provider) return;
+
+  await updateSetting("provider", provider);
+
+  const model = await pickModel(provider, getConfig()[provider].model);
+  if (!model) return;
+
+  await updateSetting(`${provider}.model`, model);
+
+  const apiKeyChoice = await vscode.window.showQuickPick(
+    [
+      { label: "Set API key now", description: PROVIDER_LABELS[provider] },
+      { label: "Skip API key", description: "Keep the current saved key or environment variable" },
+    ],
+    {
+      title: "Davinci AI Smart Commiter Setup",
+      placeHolder: "Do you want to set the API key for this provider?",
+      ignoreFocusOut: true,
+    },
+  );
+
+  if (apiKeyChoice?.label === "Set API key now") {
+    await setApiKey(context, provider);
+  }
+
+  vscode.window.showInformationMessage(
+    `Davinci AI Smart Commiter: ${PROVIDER_LABELS[provider]} selected with ${model}.`,
+  );
+}
+
+async function selectProvider() {
+  const provider = await pickProvider(getConfig().provider);
+  if (!provider) return;
+
+  await updateSetting("provider", provider);
+  vscode.window.showInformationMessage(`Davinci AI Smart Commiter: Provider set to ${PROVIDER_LABELS[provider]}.`);
+}
+
+async function selectModelForCurrentProvider() {
+  const config = getConfig();
+  const provider = config.provider;
+  const model = await pickModel(provider, config[provider].model);
+  if (!model) return;
+
+  await updateSetting(`${provider}.model`, model);
+  vscode.window.showInformationMessage(`Davinci AI Smart Commiter: ${PROVIDER_LABELS[provider]} model set to ${model}.`);
+}
+
 async function setApiKey(context: vscode.ExtensionContext, provider: ProviderName) {
   const value = await vscode.window.showInputBox({
     title: `Set ${PROVIDER_LABELS[provider]} API Key`,
@@ -57,6 +119,55 @@ async function setApiKey(context: vscode.ExtensionContext, provider: ProviderNam
   if (!value) return;
   await context.secrets.store(SECRET_KEYS[provider], value.trim());
   vscode.window.showInformationMessage("Davinci AI Smart Commiter: API key saved.");
+}
+
+async function pickProvider(currentProvider: ProviderName): Promise<ProviderName | undefined> {
+  const picked = await vscode.window.showQuickPick(
+    PROVIDERS.map((provider) => ({
+      label: PROVIDER_LABELS[provider],
+      description: provider === currentProvider ? "current" : undefined,
+      provider,
+    })),
+    {
+      title: "Davinci AI Smart Commiter: Select AI Provider",
+      placeHolder: "Choose the provider used to generate commit messages",
+      ignoreFocusOut: true,
+    },
+  );
+
+  return picked?.provider;
+}
+
+async function pickModel(provider: ProviderName, currentModel: string): Promise<string | undefined> {
+  const knownCurrent = isKnownModel(provider, currentModel);
+  const choices = PROVIDER_MODELS[provider].map((model) => ({
+    label: model.label,
+    description: model.id === currentModel ? "current" : model.description,
+    detail: model.id,
+    model: model.id,
+  }));
+
+  if (!knownCurrent && currentModel.trim()) {
+    choices.unshift({
+      label: `Keep current: ${currentModel}`,
+      description: "current custom value",
+      detail: currentModel,
+      model: currentModel,
+    });
+  }
+
+  const picked = await vscode.window.showQuickPick(choices, {
+    title: `Davinci AI Smart Commiter: Select ${PROVIDER_LABELS[provider]} Model`,
+    placeHolder: "Choose a model",
+    ignoreFocusOut: true,
+  });
+
+  return picked?.model;
+}
+
+async function updateSetting(key: string, value: string): Promise<void> {
+  const cfg = vscode.workspace.getConfiguration("aiCommitAssistant");
+  await cfg.update(key, value, vscode.ConfigurationTarget.Global);
 }
 
 async function generate(context: vscode.ExtensionContext) {
