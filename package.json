@@ -108,6 +108,27 @@
           "minimum": 2000,
           "description": "Max characters of `git diff --cached` to send to the model (the diff will be truncated)."
         },
+        "aiCommitAssistant.context.maxFiles": {
+          "type": "number",
+          "default": 6,
+          "minimum": 0,
+          "maximum": 30,
+          "description": "Maximum number of staged source/config files to include as surrounding context for better commit messages."
+        },
+        "aiCommitAssistant.context.maxChars": {
+          "type": "number",
+          "default": 12000,
+          "minimum": 0,
+          "maximum": 100000,
+          "description": "Max total characters of staged file context to send to the model."
+        },
+        "aiCommitAssistant.context.maxCharsPerFile": {
+          "type": "number",
+          "default": 4000,
+          "minimum": 0,
+          "maximum": 30000,
+          "description": "Max characters to include from each staged source/config file."
+        },
         "aiCommitAssistant.anthropic.model": {
           "type": "string",
           "default": "claude-3-haiku-20240307",

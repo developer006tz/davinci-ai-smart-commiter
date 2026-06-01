@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "node:path";
-import { getRepoRoot, gitAddAll, gitDiffCached, gitDiffNumstat } from "./git";
+import { getRepoRoot, gitAddAll, gitDiffCached, gitDiffNumstat, gitStagedFileContext } from "./git";
 import { buildUserPrompt, SYSTEM_PROMPT } from "./prompt";
 import { generateCommitMessage } from "./providers";
 import { getConfig, type ProviderName } from "./settings";
@@ -96,8 +96,13 @@ async function generate(context: vscode.ExtensionContext) {
           vscode.window.showInformationMessage("Davinci AI Smart Commiter: No staged changes found.");
           return;
         }
+        const fileContext = await gitStagedFileContext(repoRoot, {
+          maxFiles: config.contextMaxFiles,
+          maxChars: config.contextMaxChars,
+          maxCharsPerFile: config.contextMaxCharsPerFile,
+        });
 
-        const prompt = buildUserPrompt({ numstat, diff });
+        const prompt = buildUserPrompt({ numstat, diff, fileContext });
 
         const message = await generateCommitMessage(provider, {
           apiKey,

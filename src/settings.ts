@@ -10,6 +10,9 @@ export function getConfig() {
     temperature: cfg.get<number>("temperature", 0.2),
     maxTokens: cfg.get<number>("maxTokens", 200),
     diffMaxChars: cfg.get<number>("diff.maxChars", 35000),
+    contextMaxFiles: cfg.get<number>("context.maxFiles", 6),
+    contextMaxChars: cfg.get<number>("context.maxChars", 12000),
+    contextMaxCharsPerFile: cfg.get<number>("context.maxCharsPerFile", 4000),
     anthropic: {
       model: cfg.get<string>("anthropic.model", "claude-3-haiku-20240307"),
       baseUrl: cfg.get<string>("anthropic.baseUrl", "https://api.anthropic.com"),

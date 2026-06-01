@@ -16,6 +16,7 @@ Generate Conventional Commits messages from your staged git diff using:
 4. The extension will:
    - `git add -A` (if enabled)
    - read `git diff --cached` + `--numstat`
+   - read small staged source/config files as extra context to understand the intent of the changes
    - ask the configured provider for a Conventional Commits message
    - fill the Source Control commit message input box
 
@@ -40,6 +41,12 @@ Environment variable fallbacks:
 ## Configuration
 
 See `Settings` -> `Davinci AI Smart Commiter`.
+
+Useful context settings:
+
+- `aiCommitAssistant.context.maxFiles`
+- `aiCommitAssistant.context.maxChars`
+- `aiCommitAssistant.context.maxCharsPerFile`
 
 ## Author
 
