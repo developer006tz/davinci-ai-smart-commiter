@@ -2,7 +2,7 @@
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
   "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "local",
   "author": {
     "name": "Ludovick Konyo",
@@ -281,7 +281,7 @@
             "Legacy reasoning alias, deprecated after 2026-07-24."
           ],
           "order": 50,
-          "markdownDescription": "DeepSeek model used when provider is `deepseek`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
+          "markdownDescription": "DeepSeek model used when provider is `deepseek`. The extension disables thinking mode for commit-message generation so the API returns a normal final message."
         },
         "aiCommitAssistant.deepseek.baseUrl": {
           "type": "string",

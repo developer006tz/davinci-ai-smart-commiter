@@ -47,6 +47,8 @@ Start with `Davinci AI Smart Commiter: Setup Provider, Model, and API Key`. In S
 
 Kimi note: for `kimi-k2.6` and `kimi-k2.5`, the extension disables thinking mode when generating commit messages. Kimi enables thinking by default, which can consume the short commit-message token budget before returning final `content`.
 
+DeepSeek note: for DeepSeek V4 models, the extension also disables thinking mode when generating commit messages. The commit workflow needs a final one-line `content` value, not reasoning-only output.
+
 Useful context settings:
 
 - `aiCommitAssistant.context.maxFiles`

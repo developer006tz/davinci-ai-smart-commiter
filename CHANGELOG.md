@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.7
+
+- Fix DeepSeek V4 commit generation by disabling thinking mode for short commit-message requests.
+- Document DeepSeek thinking-mode behavior in settings and README.
+
 ## 0.0.6
 
 - Add DOM lib typings so VS Code resolves the global `fetch` API in provider code.

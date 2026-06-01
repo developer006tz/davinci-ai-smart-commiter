@@ -12,6 +12,7 @@ const OPENAI_COMPATIBLE_PROVIDER_META: Partial<
 };
 
 const KIMI_THINKING_MODELS = new Set(["kimi-k2.6", "kimi-k2.5"]);
+const DEEPSEEK_THINKING_MODELS = new Set(["deepseek-v4-flash", "deepseek-v4-pro", "deepseek-reasoner"]);
 
 export async function generateCommitMessage(
   provider: ProviderName,
@@ -29,12 +30,14 @@ export async function generateCommitMessage(
 
   const meta = OPENAI_COMPATIBLE_PROVIDER_META[provider];
   const disableKimiThinking = provider === "kimi" && KIMI_THINKING_MODELS.has(opts.model);
+  const disableDeepSeekThinking = provider === "deepseek" && DEEPSEEK_THINKING_MODELS.has(opts.model);
+  const disableThinking = disableKimiThinking || disableDeepSeekThinking;
 
   return callOpenAICompatible({
     ...opts,
     providerLabel: meta?.label,
     defaultChatCompletionsPath: meta?.defaultChatCompletionsPath,
     omitTemperature: disableKimiThinking,
-    extraBody: disableKimiThinking ? { thinking: { type: "disabled" } } : undefined,
+    extraBody: disableThinking ? { thinking: { type: "disabled" } } : undefined,
   });
 }
