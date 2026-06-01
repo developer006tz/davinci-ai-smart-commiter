@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export type ProviderName = "anthropic" | "openai";
+export type ProviderName = "anthropic" | "openai" | "kimi" | "deepseek";
 
 export function getConfig() {
   const cfg = vscode.workspace.getConfiguration("aiCommitAssistant");
@@ -17,6 +17,14 @@ export function getConfig() {
     openai: {
       model: cfg.get<string>("openai.model", "gpt-3.5-turbo"),
       baseUrl: cfg.get<string>("openai.baseUrl", "https://api.openai.com"),
+    },
+    kimi: {
+      model: cfg.get<string>("kimi.model", "kimi-k2.6"),
+      baseUrl: cfg.get<string>("kimi.baseUrl", "https://api.moonshot.ai/v1"),
+    },
+    deepseek: {
+      model: cfg.get<string>("deepseek.model", "deepseek-v4-flash"),
+      baseUrl: cfg.get<string>("deepseek.baseUrl", "https://api.deepseek.com"),
     },
   };
 }

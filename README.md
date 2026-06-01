@@ -4,6 +4,8 @@ Generate Conventional Commits messages from your staged git diff using:
 
 - Anthropic Claude (`claude-3-haiku-20240307` by default)
 - OpenAI (`gpt-3.5-turbo` by default)
+- Kimi/Moonshot (`kimi-k2.6` by default)
+- DeepSeek (`deepseek-v4-flash` by default)
 
 ## Usage
 
@@ -22,11 +24,15 @@ Set your API key (stored in VS Code Secret Storage):
 
 - `Davinci AI Smart Commiter: Set Anthropic API Key`
 - `Davinci AI Smart Commiter: Set OpenAI API Key`
+- `Davinci AI Smart Commiter: Set Kimi API Key`
+- `Davinci AI Smart Commiter: Set DeepSeek API Key`
 
 Environment variable fallbacks:
 
 - `ANTHROPIC_API_KEY` or `AI_COMMIT_ANTHROPIC_API_KEY`
 - `OPENAI_API_KEY` or `AI_COMMIT_OPENAI_API_KEY`
+- `MOONSHOT_API_KEY`, `KIMI_API_KEY`, or `AI_COMMIT_KIMI_API_KEY`
+- `DEEPSEEK_API_KEY` or `AI_COMMIT_DEEPSEEK_API_KEY`
 
 ## Configuration
 

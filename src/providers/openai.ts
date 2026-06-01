@@ -1,4 +1,4 @@
-type OpenAIOpts = {
+type OpenAICompatibleOpts = {
   apiKey: string;
   baseUrl: string;
   model: string;
@@ -6,10 +6,12 @@ type OpenAIOpts = {
   maxTokens: number;
   system: string;
   user: string;
+  providerLabel?: string;
+  defaultChatCompletionsPath?: string;
 };
 
-export async function callOpenAI(opts: OpenAIOpts): Promise<string> {
-  const url = new URL("/v1/chat/completions", opts.baseUrl).toString();
+export async function callOpenAICompatible(opts: OpenAICompatibleOpts): Promise<string> {
+  const url = buildChatCompletionsUrl(opts.baseUrl, opts.defaultChatCompletionsPath ?? "/v1/chat/completions");
 
   const res = await fetch(url, {
     method: "POST",
@@ -30,7 +32,7 @@ export async function callOpenAI(opts: OpenAIOpts): Promise<string> {
 
   const text = await res.text();
   if (!res.ok) {
-    throw new Error(`OpenAI API error (${res.status}): ${text}`);
+    throw new Error(`${opts.providerLabel ?? "OpenAI-compatible"} API error (${res.status}): ${text}`);
   }
 
   const json = JSON.parse(text) as {
@@ -40,3 +42,17 @@ export async function callOpenAI(opts: OpenAIOpts): Promise<string> {
   return json.choices?.[0]?.message?.content ?? "";
 }
 
+function buildChatCompletionsUrl(baseUrl: string, defaultPath: string): string {
+  const parsed = new URL(baseUrl);
+  const path = parsed.pathname.replace(/\/+$/, "");
+
+  if (path.endsWith("/chat/completions")) {
+    return parsed.toString();
+  }
+
+  if (!path) {
+    return new URL(defaultPath, parsed.origin).toString();
+  }
+
+  return new URL(`${path}/chat/completions`, parsed.origin).toString();
+}

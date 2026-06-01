@@ -8,7 +8,16 @@ import { getConfig, type ProviderName } from "./settings";
 const SECRET_KEYS = {
   anthropic: "aiCommitAssistant.anthropicApiKey",
   openai: "aiCommitAssistant.openaiApiKey",
+  kimi: "aiCommitAssistant.kimiApiKey",
+  deepseek: "aiCommitAssistant.deepseekApiKey",
 } as const;
+
+const PROVIDER_LABELS: Record<ProviderName, string> = {
+  anthropic: "Anthropic",
+  openai: "OpenAI",
+  kimi: "Kimi",
+  deepseek: "DeepSeek",
+};
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -17,6 +26,12 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand("aiCommitAssistant.setOpenAIApiKey", async () => {
       await setApiKey(context, "openai");
+    }),
+    vscode.commands.registerCommand("aiCommitAssistant.setKimiApiKey", async () => {
+      await setApiKey(context, "kimi");
+    }),
+    vscode.commands.registerCommand("aiCommitAssistant.setDeepSeekApiKey", async () => {
+      await setApiKey(context, "deepseek");
     }),
     vscode.commands.registerCommand("aiCommitAssistant.generateCommitMessage", async () => {
       await generate(context);
@@ -28,7 +43,7 @@ export function deactivate() {}
 
 async function setApiKey(context: vscode.ExtensionContext, provider: ProviderName) {
   const value = await vscode.window.showInputBox({
-    title: provider === "anthropic" ? "Set Anthropic API Key" : "Set OpenAI API Key",
+    title: `Set ${PROVIDER_LABELS[provider]} API Key`,
     password: true,
     prompt: "Stored securely in VS Code Secret Storage for this machine.",
     ignoreFocusOut: true,
@@ -57,10 +72,7 @@ async function generate(context: vscode.ExtensionContext) {
   const provider = config.provider;
   const apiKey = await resolveApiKey(context, provider);
   if (!apiKey) {
-    const msg =
-      provider === "anthropic"
-        ? "Davinci AI Smart Commiter: Missing Anthropic API key. Run “Davinci AI Smart Commiter: Set Anthropic API Key”."
-        : "Davinci AI Smart Commiter: Missing OpenAI API key. Run “Davinci AI Smart Commiter: Set OpenAI API Key”.";
+    const msg = `Davinci AI Smart Commiter: Missing ${PROVIDER_LABELS[provider]} API key. Run “Davinci AI Smart Commiter: Set ${PROVIDER_LABELS[provider]} API Key”.`;
     vscode.window.showErrorMessage(msg);
     return;
   }
@@ -84,8 +96,8 @@ async function generate(context: vscode.ExtensionContext) {
 
         const message = await generateCommitMessage(provider, {
           apiKey,
-          baseUrl: provider === "anthropic" ? config.anthropic.baseUrl : config.openai.baseUrl,
-          model: provider === "anthropic" ? config.anthropic.model : config.openai.model,
+          baseUrl: getProviderConfig(config, provider).baseUrl,
+          model: getProviderConfig(config, provider).model,
           temperature: config.temperature,
           maxTokens: config.maxTokens,
           system: SYSTEM_PROMPT,
@@ -123,8 +135,25 @@ async function resolveApiKey(context: vscode.ExtensionContext, provider: Provide
     return env?.trim() || undefined;
   }
 
-  const env = process.env.OPENAI_API_KEY || process.env.AI_COMMIT_OPENAI_API_KEY;
+  if (provider === "openai") {
+    const env = process.env.OPENAI_API_KEY || process.env.AI_COMMIT_OPENAI_API_KEY;
+    return env?.trim() || undefined;
+  }
+
+  if (provider === "kimi") {
+    const env = process.env.MOONSHOT_API_KEY || process.env.KIMI_API_KEY || process.env.AI_COMMIT_KIMI_API_KEY;
+    return env?.trim() || undefined;
+  }
+
+  const env = process.env.DEEPSEEK_API_KEY || process.env.AI_COMMIT_DEEPSEEK_API_KEY;
   return env?.trim() || undefined;
+}
+
+function getProviderConfig(
+  config: ReturnType<typeof getConfig>,
+  provider: ProviderName,
+): { model: string; baseUrl: string } {
+  return config[provider];
 }
 
 type GitExtensionApi = {

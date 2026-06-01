@@ -1,7 +1,7 @@
 {
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
-  "description": "Generate Conventional Commits messages from your staged git diff using Claude or OpenAI.",
+  "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, or DeepSeek.",
   "version": "0.0.1",
   "publisher": "local",
   "author": {
@@ -23,7 +23,9 @@
   "activationEvents": [
     "onCommand:aiCommitAssistant.generateCommitMessage",
     "onCommand:aiCommitAssistant.setAnthropicApiKey",
-    "onCommand:aiCommitAssistant.setOpenAIApiKey"
+    "onCommand:aiCommitAssistant.setOpenAIApiKey",
+    "onCommand:aiCommitAssistant.setKimiApiKey",
+    "onCommand:aiCommitAssistant.setDeepSeekApiKey"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -46,6 +48,16 @@
         "command": "aiCommitAssistant.setOpenAIApiKey",
         "title": "Davinci AI Smart Commiter: Set OpenAI API Key",
         "category": "Davinci AI Smart Commiter"
+      },
+      {
+        "command": "aiCommitAssistant.setKimiApiKey",
+        "title": "Davinci AI Smart Commiter: Set Kimi API Key",
+        "category": "Davinci AI Smart Commiter"
+      },
+      {
+        "command": "aiCommitAssistant.setDeepSeekApiKey",
+        "title": "Davinci AI Smart Commiter: Set DeepSeek API Key",
+        "category": "Davinci AI Smart Commiter"
       }
     ],
     "menus": {
@@ -62,7 +74,7 @@
         "aiCommitAssistant.provider": {
           "type": "string",
           "default": "anthropic",
-          "enum": ["anthropic", "openai"],
+          "enum": ["anthropic", "openai", "kimi", "deepseek"],
           "description": "Which AI provider to use."
         },
         "aiCommitAssistant.autoStage": {
@@ -109,6 +121,26 @@
           "type": "string",
           "default": "https://api.openai.com",
           "description": "OpenAI API base URL."
+        },
+        "aiCommitAssistant.kimi.model": {
+          "type": "string",
+          "default": "kimi-k2.6",
+          "description": "Kimi model name."
+        },
+        "aiCommitAssistant.kimi.baseUrl": {
+          "type": "string",
+          "default": "https://api.moonshot.ai/v1",
+          "description": "Kimi/Moonshot API base URL."
+        },
+        "aiCommitAssistant.deepseek.model": {
+          "type": "string",
+          "default": "deepseek-v4-flash",
+          "description": "DeepSeek model name."
+        },
+        "aiCommitAssistant.deepseek.baseUrl": {
+          "type": "string",
+          "default": "https://api.deepseek.com",
+          "description": "DeepSeek API base URL."
         }
       }
     }
