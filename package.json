@@ -1,7 +1,7 @@
 {
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
-  "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, or DeepSeek.",
+  "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
   "version": "0.0.1",
   "publisher": "local",
   "author": {
@@ -25,7 +25,8 @@
     "onCommand:aiCommitAssistant.setAnthropicApiKey",
     "onCommand:aiCommitAssistant.setOpenAIApiKey",
     "onCommand:aiCommitAssistant.setKimiApiKey",
-    "onCommand:aiCommitAssistant.setDeepSeekApiKey"
+    "onCommand:aiCommitAssistant.setDeepSeekApiKey",
+    "onCommand:aiCommitAssistant.setGeminiApiKey"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -58,6 +59,11 @@
         "command": "aiCommitAssistant.setDeepSeekApiKey",
         "title": "Davinci AI Smart Commiter: Set DeepSeek API Key",
         "category": "Davinci AI Smart Commiter"
+      },
+      {
+        "command": "aiCommitAssistant.setGeminiApiKey",
+        "title": "Davinci AI Smart Commiter: Set Gemini API Key",
+        "category": "Davinci AI Smart Commiter"
       }
     ],
     "menus": {
@@ -74,7 +80,7 @@
         "aiCommitAssistant.provider": {
           "type": "string",
           "default": "anthropic",
-          "enum": ["anthropic", "openai", "kimi", "deepseek"],
+          "enum": ["anthropic", "openai", "kimi", "deepseek", "gemini"],
           "description": "Which AI provider to use."
         },
         "aiCommitAssistant.autoStage": {
@@ -141,6 +147,16 @@
           "type": "string",
           "default": "https://api.deepseek.com",
           "description": "DeepSeek API base URL."
+        },
+        "aiCommitAssistant.gemini.model": {
+          "type": "string",
+          "default": "gemini-2.5-flash",
+          "description": "Google Gemini model name."
+        },
+        "aiCommitAssistant.gemini.baseUrl": {
+          "type": "string",
+          "default": "https://generativelanguage.googleapis.com/v1beta/openai",
+          "description": "Google Gemini OpenAI-compatible API base URL."
         }
       }
     }

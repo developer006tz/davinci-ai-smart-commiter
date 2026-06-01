@@ -10,6 +10,7 @@ const SECRET_KEYS = {
   openai: "aiCommitAssistant.openaiApiKey",
   kimi: "aiCommitAssistant.kimiApiKey",
   deepseek: "aiCommitAssistant.deepseekApiKey",
+  gemini: "aiCommitAssistant.geminiApiKey",
 } as const;
 
 const PROVIDER_LABELS: Record<ProviderName, string> = {
@@ -17,6 +18,7 @@ const PROVIDER_LABELS: Record<ProviderName, string> = {
   openai: "OpenAI",
   kimi: "Kimi",
   deepseek: "DeepSeek",
+  gemini: "Gemini",
 };
 
 export function activate(context: vscode.ExtensionContext) {
@@ -32,6 +34,9 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand("aiCommitAssistant.setDeepSeekApiKey", async () => {
       await setApiKey(context, "deepseek");
+    }),
+    vscode.commands.registerCommand("aiCommitAssistant.setGeminiApiKey", async () => {
+      await setApiKey(context, "gemini");
     }),
     vscode.commands.registerCommand("aiCommitAssistant.generateCommitMessage", async () => {
       await generate(context);
@@ -142,6 +147,11 @@ async function resolveApiKey(context: vscode.ExtensionContext, provider: Provide
 
   if (provider === "kimi") {
     const env = process.env.MOONSHOT_API_KEY || process.env.KIMI_API_KEY || process.env.AI_COMMIT_KIMI_API_KEY;
+    return env?.trim() || undefined;
+  }
+
+  if (provider === "gemini") {
+    const env = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.AI_COMMIT_GEMINI_API_KEY;
     return env?.trim() || undefined;
   }
 

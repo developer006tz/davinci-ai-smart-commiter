@@ -8,6 +8,7 @@ const OPENAI_COMPATIBLE_PROVIDER_META: Partial<
   openai: { label: "OpenAI", defaultChatCompletionsPath: "/v1/chat/completions" },
   kimi: { label: "Kimi", defaultChatCompletionsPath: "/v1/chat/completions" },
   deepseek: { label: "DeepSeek", defaultChatCompletionsPath: "/chat/completions" },
+  gemini: { label: "Gemini", defaultChatCompletionsPath: "/v1beta/openai/chat/completions" },
 };
 
 export async function generateCommitMessage(

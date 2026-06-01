@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export type ProviderName = "anthropic" | "openai" | "kimi" | "deepseek";
+export type ProviderName = "anthropic" | "openai" | "kimi" | "deepseek" | "gemini";
 
 export function getConfig() {
   const cfg = vscode.workspace.getConfiguration("aiCommitAssistant");
@@ -25,6 +25,10 @@ export function getConfig() {
     deepseek: {
       model: cfg.get<string>("deepseek.model", "deepseek-v4-flash"),
       baseUrl: cfg.get<string>("deepseek.baseUrl", "https://api.deepseek.com"),
+    },
+    gemini: {
+      model: cfg.get<string>("gemini.model", "gemini-2.5-flash"),
+      baseUrl: cfg.get<string>("gemini.baseUrl", "https://generativelanguage.googleapis.com/v1beta/openai"),
     },
   };
 }
