@@ -1,13 +1,9 @@
 .vscode/**
 src/**
-**/*.map
+out/**/*.map
 tsconfig.json
 *.ts
 .gitignore
 node_modules/**
-!out/**
-!package.json
-!README.md
-!CHANGELOG.md
-!LICENSE
-!resources/**
+*.vsix
+package-lock.json

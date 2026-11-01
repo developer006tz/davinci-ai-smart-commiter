@@ -9,8 +9,11 @@ export type ModelChoice = {
 export const PROVIDER_MODELS: Record<ProviderName, ModelChoice[]> = {
   anthropic: [
     { id: "claude-haiku-4-5-20251001", label: "Claude Haiku 4.5", description: "Fast and cost-effective" },
-    { id: "claude-sonnet-4-6", label: "Claude Sonnet 4.6", description: "Balanced speed and intelligence" },
-    { id: "claude-opus-4-7", label: "Claude Opus 4.7", description: "Highest capability" },
+    { id: "claude-haiku-5-5", label: "Claude Haiku 5.5", description: "Latest Haiku: fast and very low cost" },
+    { id: "claude-sonnet-5-5", label: "Claude Sonnet 5.5", description: "Latest Sonnet: balanced speed and intelligence" },
+    { id: "claude-opus-5-5", label: "Claude Opus 5.5", description: "Latest Opus: highest capability" },
+    { id: "claude-sonnet-4-6", label: "Claude Sonnet 4.6", description: "Previous Sonnet" },
+    { id: "claude-opus-4-7", label: "Claude Opus 4.7", description: "Previous Opus" },
     { id: "claude-3-haiku-20240307", label: "Claude 3 Haiku", description: "Legacy fast model" },
   ],
   openai: [

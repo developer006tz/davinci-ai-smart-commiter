@@ -1,8 +1,8 @@
 {
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
-  "description": "Generate Conventional Commits messages from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
-  "version": "0.0.7",
+  "description": "Generate detailed Conventional Commits messages (subject + bullet body) from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
+  "version": "0.0.8",
   "publisher": "local",
   "author": {
     "name": "Ludovick Konyo",
@@ -20,17 +20,7 @@
     "SCM Providers",
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:aiCommitAssistant.generateCommitMessage",
-    "onCommand:aiCommitAssistant.setup",
-    "onCommand:aiCommitAssistant.selectProvider",
-    "onCommand:aiCommitAssistant.selectModel",
-    "onCommand:aiCommitAssistant.setAnthropicApiKey",
-    "onCommand:aiCommitAssistant.setOpenAIApiKey",
-    "onCommand:aiCommitAssistant.setKimiApiKey",
-    "onCommand:aiCommitAssistant.setDeepSeekApiKey",
-    "onCommand:aiCommitAssistant.setGeminiApiKey"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -82,6 +72,16 @@
         "command": "aiCommitAssistant.setGeminiApiKey",
         "title": "Davinci AI Smart Commiter: Set Gemini API Key",
         "category": "Davinci AI Smart Commiter"
+      },
+      {
+        "command": "aiCommitAssistant.selectCommitStyle",
+        "title": "Davinci AI Smart Commiter: Select Commit Message Style",
+        "category": "Davinci AI Smart Commiter"
+      },
+      {
+        "command": "aiCommitAssistant.showLog",
+        "title": "Davinci AI Smart Commiter: Show Log",
+        "category": "Davinci AI Smart Commiter"
       }
     ],
     "menus": {
@@ -98,8 +98,20 @@
         "aiCommitAssistant.provider": {
           "type": "string",
           "default": "anthropic",
-          "enum": ["anthropic", "openai", "kimi", "deepseek", "gemini"],
-          "enumItemLabels": ["Anthropic Claude", "OpenAI", "Kimi K2 / Moonshot", "DeepSeek", "Google Gemini"],
+          "enum": [
+            "anthropic",
+            "openai",
+            "kimi",
+            "deepseek",
+            "gemini"
+          ],
+          "enumItemLabels": [
+            "Anthropic Claude",
+            "OpenAI",
+            "Kimi K2 / Moonshot",
+            "DeepSeek",
+            "Google Gemini"
+          ],
           "markdownEnumDescriptions": [
             "Use Anthropic Messages API. Set the key with `Davinci AI Smart Commiter: Set Anthropic API Key`.",
             "Use OpenAI Chat Completions API. Set the key with `Davinci AI Smart Commiter: Set OpenAI API Key`.",
@@ -110,10 +122,35 @@
           "order": 1,
           "markdownDescription": "Choose the AI provider used to generate commit messages. API keys are stored in VS Code Secret Storage via the matching `Set ... API Key` command."
         },
+        "aiCommitAssistant.commitStyle": {
+          "type": "string",
+          "default": "detailed",
+          "enum": [
+            "detailed",
+            "concise"
+          ],
+          "enumItemLabels": [
+            "Detailed (subject + bullet body)",
+            "Concise (subject line only)"
+          ],
+          "markdownEnumDescriptions": [
+            "Conventional Commits subject plus a bulleted body that lists every meaningful change (new files, components, queries, routes, tests, config...).",
+            "A single Conventional Commits subject line."
+          ],
+          "order": 2,
+          "markdownDescription": "How much detail the generated commit message contains."
+        },
+        "aiCommitAssistant.customInstructions": {
+          "type": "string",
+          "default": "",
+          "editPresentation": "multilineText",
+          "order": 3,
+          "markdownDescription": "Extra project-specific rules for the AI, e.g. `Use Jira key from branch`, `Write in Swahili`, `Allowed scopes: api, web, accounting`. These override the built-in rules."
+        },
         "aiCommitAssistant.autoStage": {
           "type": "boolean",
           "default": true,
-          "order": 2,
+          "order": 4,
           "markdownDescription": "Run `git add -A` before generating the commit message."
         },
         "aiCommitAssistant.temperature": {
@@ -121,38 +158,38 @@
           "default": 0.2,
           "minimum": 0,
           "maximum": 2,
-          "order": 3,
-          "markdownDescription": "Controls creativity. Lower values make commit messages more consistent."
+          "order": 5,
+          "markdownDescription": "Controls creativity. Lower values make commit messages more consistent. Ignored by models that do not accept a custom temperature (Claude Opus 4.7+, Claude 5 family, OpenAI GPT-5/o-series, Kimi K2.5+)."
         },
         "aiCommitAssistant.maxTokens": {
           "type": "number",
-          "default": 360,
+          "default": 1024,
           "minimum": 64,
           "maximum": 4096,
-          "order": 4,
-          "markdownDescription": "Maximum tokens for the generated commit message. Keep this modest because the extension expects a single line."
+          "order": 6,
+          "markdownDescription": "Maximum output tokens for the generated commit message. In `detailed` style at least 1024 is used; thinking/reasoning models automatically get at least 4096."
         },
         "aiCommitAssistant.diff.maxChars": {
           "type": "number",
-          "default": 35000,
+          "default": 50000,
           "minimum": 2000,
-          "order": 5,
-          "markdownDescription": "Maximum characters from `git diff --cached` to send to the model. Larger values give more detail but cost more tokens."
+          "order": 8,
+          "markdownDescription": "Maximum characters of the staged diff sent to the model. When the diff is larger, every file gets a fair share (small files stay whole, big files are trimmed) so no file is ignored. Lock files, minified files, source maps and snapshots are never sent."
         },
         "aiCommitAssistant.context.maxFiles": {
           "type": "number",
           "default": 6,
           "minimum": 0,
           "maximum": 30,
-          "order": 6,
-          "markdownDescription": "Maximum staged source/config files to read as surrounding context. Set to `0` to disable context reading."
+          "order": 9,
+          "markdownDescription": "Maximum modified files whose full staged content is sent as surrounding context (most-changed first). Set to `0` to disable."
         },
         "aiCommitAssistant.context.maxChars": {
           "type": "number",
           "default": 12000,
           "minimum": 0,
           "maximum": 100000,
-          "order": 7,
+          "order": 10,
           "markdownDescription": "Maximum total characters of surrounding file context to send to the model."
         },
         "aiCommitAssistant.context.maxCharsPerFile": {
@@ -160,7 +197,7 @@
           "default": 4000,
           "minimum": 0,
           "maximum": 30000,
-          "order": 8,
+          "order": 11,
           "markdownDescription": "Maximum characters to include from each staged source/config file."
         },
         "aiCommitAssistant.anthropic.model": {
@@ -168,20 +205,29 @@
           "default": "claude-haiku-4-5-20251001",
           "enum": [
             "claude-haiku-4-5-20251001",
+            "claude-haiku-5-5",
+            "claude-sonnet-5-5",
+            "claude-opus-5-5",
             "claude-sonnet-4-6",
             "claude-opus-4-7",
             "claude-3-haiku-20240307"
           ],
           "enumItemLabels": [
             "Claude Haiku 4.5",
+            "Claude Haiku 5.5",
+            "Claude Sonnet 5.5",
+            "Claude Opus 5.5",
             "Claude Sonnet 4.6",
             "Claude Opus 4.7",
             "Claude 3 Haiku"
           ],
           "markdownEnumDescriptions": [
             "Fast and cost-effective.",
-            "Balanced speed and intelligence.",
-            "Highest capability.",
+            "Latest Haiku: fast and very low cost.",
+            "Latest Sonnet: balanced speed and intelligence.",
+            "Latest Opus: highest capability.",
+            "Previous Sonnet.",
+            "Previous Opus.",
             "Legacy fast model."
           ],
           "order": 20,
@@ -315,6 +361,22 @@
           "default": "https://generativelanguage.googleapis.com/v1beta/openai",
           "order": 61,
           "markdownDescription": "Google Gemini OpenAI-compatible API base URL."
+        },
+        "aiCommitAssistant.requestTimeoutSeconds": {
+          "type": "number",
+          "default": 90,
+          "minimum": 10,
+          "maximum": 600,
+          "order": 7,
+          "markdownDescription": "Abort the AI request if it takes longer than this. Rate-limit and server errors are retried automatically."
+        },
+        "aiCommitAssistant.context.recentCommits": {
+          "type": "number",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 50,
+          "order": 12,
+          "markdownDescription": "Number of recent commit subjects sent so the AI reuses your repository's scope names and conventions. Set to `0` to disable."
         }
       }
     }
