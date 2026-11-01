@@ -267,12 +267,12 @@ async function generate(context: vscode.ExtensionContext, arg?: unknown) {
         });
         const system = buildSystemPrompt(config.commitStyle, config.customInstructions);
 
-        const { model, baseUrl } = config[provider];
+        const { model, baseUrl, effort } = config[provider];
         // A detailed message (subject + bullet body) needs more room than a single line.
         const maxTokens = config.commitStyle === "detailed" ? Math.max(config.maxTokens, 1024) : config.maxTokens;
 
         log(
-          `Generating with ${PROVIDER_LABELS[provider]} (${model}), style=${config.commitStyle}, ` +
+          `Generating with ${PROVIDER_LABELS[provider]} (${model}, effort=${effort}), style=${config.commitStyle}, ` +
             `files=${files.length}, diffChars=${diff.length}${diffTruncated ? " (trimmed)" : ""}, ` +
             `contextChars=${fileContext.length}, promptChars=${system.length + user.length}`,
         );
@@ -281,6 +281,7 @@ async function generate(context: vscode.ExtensionContext, arg?: unknown) {
           apiKey,
           baseUrl,
           model,
+          effort,
           temperature: config.temperature,
           maxTokens,
           system,

@@ -50,6 +50,11 @@ export async function callOpenAICompatible(opts: OpenAICompatibleOpts): Promise<
           delete body.max_tokens;
           continue;
         }
+        if ("max_completion_tokens" in body && rejectsParam(err, "max_completion_tokens")) {
+          body.max_tokens = body.max_completion_tokens;
+          delete body.max_completion_tokens;
+          continue;
+        }
         if ("temperature" in body && rejectsParam(err, "temperature")) {
           delete body.temperature;
           continue;

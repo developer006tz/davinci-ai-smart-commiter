@@ -2,7 +2,7 @@
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
   "description": "Generate detailed Conventional Commits messages (subject + bullet body) from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "publisher": "local",
   "author": {
     "name": "Ludovick Konyo",
@@ -202,47 +202,61 @@
         },
         "aiCommitAssistant.anthropic.model": {
           "type": "string",
-          "default": "claude-haiku-4-5-20251001",
+          "default": "claude-haiku-5-5",
           "enum": [
-            "claude-haiku-4-5-20251001",
             "claude-haiku-5-5",
             "claude-sonnet-5-5",
             "claude-opus-5-5",
             "claude-sonnet-4-6",
             "claude-opus-4-7",
+            "claude-haiku-4-5-20251001",
             "claude-3-haiku-20240307"
           ],
           "enumItemLabels": [
-            "Claude Haiku 4.5",
             "Claude Haiku 5.5",
             "Claude Sonnet 5.5",
             "Claude Opus 5.5",
             "Claude Sonnet 4.6",
             "Claude Opus 4.7",
+            "Claude Haiku 4.5",
             "Claude 3 Haiku"
           ],
           "markdownEnumDescriptions": [
-            "Fast and cost-effective.",
-            "Latest Haiku: fast and very low cost.",
+            "Latest Haiku: fast and very low cost. Default.",
             "Latest Sonnet: balanced speed and intelligence.",
             "Latest Opus: highest capability.",
             "Previous Sonnet.",
             "Previous Opus.",
+            "Previous Haiku.",
             "Legacy fast model."
           ],
           "order": 20,
           "markdownDescription": "Anthropic model used when provider is `anthropic`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
         },
+        "aiCommitAssistant.anthropic.effort": {
+          "type": "string",
+          "default": "low",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "order": 22,
+          "markdownDescription": "Effort level for Claude models that support it (Claude 5 family, Opus 4.5+). `low` is fast and cheap and is plenty for commit messages. Older models ignore it."
+        },
         "aiCommitAssistant.anthropic.baseUrl": {
           "type": "string",
           "default": "https://api.anthropic.com",
-          "order": 21,
+          "order": 23,
           "markdownDescription": "Anthropic API base URL."
         },
         "aiCommitAssistant.openai.model": {
           "type": "string",
-          "default": "gpt-4o-mini",
+          "default": "gpt-6-luna",
           "enum": [
+            "gpt-6-luna",
             "gpt-4o-mini",
             "gpt-5.4-mini",
             "gpt-5.4-nano",
@@ -250,6 +264,7 @@
             "gpt-5.5"
           ],
           "enumItemLabels": [
+            "GPT-6 Luna",
             "GPT-4o mini",
             "GPT-5.4 mini",
             "GPT-5.4 nano",
@@ -257,7 +272,8 @@
             "GPT-5.5"
           ],
           "markdownEnumDescriptions": [
-            "Fast, affordable, reliable for commit messages.",
+            "Latest fast, low-cost reasoning model. Default.",
+            "Fast, affordable, non-reasoning.",
             "Stronger coding model, lower cost than flagship.",
             "Lowest latency and cost.",
             "Higher capability.",
@@ -266,16 +282,32 @@
           "order": 30,
           "markdownDescription": "OpenAI model used when provider is `openai`. Use `Davinci AI Smart Commiter: Select Default Model` to change it without typing."
         },
+        "aiCommitAssistant.openai.reasoningEffort": {
+          "type": "string",
+          "default": "medium",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "order": 32,
+          "markdownDescription": "Reasoning effort for OpenAI reasoning models (GPT-6, GPT-5, o-series). `medium` is the default. Higher levels are slower; raise `requestTimeoutSeconds` if you use `high` or above. Ignored by non-reasoning models such as GPT-4o mini."
+        },
         "aiCommitAssistant.openai.baseUrl": {
           "type": "string",
           "default": "https://api.openai.com",
-          "order": 31,
+          "order": 33,
           "markdownDescription": "OpenAI API base URL."
         },
         "aiCommitAssistant.kimi.model": {
           "type": "string",
-          "default": "kimi-k2.6",
+          "default": "kimi-k3.1-pro",
           "enum": [
+            "kimi-k3.1-pro",
+            "kimi-k3.1-pro-highspeed",
             "kimi-k2.6",
             "kimi-k2.5",
             "moonshot-v1-8k",
@@ -283,6 +315,8 @@
             "moonshot-v1-128k"
           ],
           "enumItemLabels": [
+            "Kimi K3.1 Pro",
+            "Kimi K3.1 Pro Highspeed",
             "Kimi K2.6",
             "Kimi K2.5",
             "Moonshot V1 8K",
@@ -290,49 +324,77 @@
             "Moonshot V1 128K"
           ],
           "markdownEnumDescriptions": [
-            "Latest Kimi coding and agent model.",
-            "Previous Kimi K2 multimodal model.",
+            "Latest Kimi model; thinking is always on, depth set by `kimi.reasoningEffort`. Default.",
+            "Faster output variant of K3.1 Pro.",
+            "Previous Kimi coding and agent model (thinking disabled by the extension).",
+            "Previous Kimi K2 multimodal model (thinking disabled by the extension).",
             "Short text generation model.",
             "Longer text generation model.",
             "Very long context text generation model."
           ],
           "order": 40,
-          "markdownDescription": "Kimi/Moonshot model used when provider is `kimi`. For `kimi-k2.6` and `kimi-k2.5`, the extension disables thinking for commit-message generation so the API returns a normal final message."
+          "markdownDescription": "Kimi/Moonshot model used when provider is `kimi`. K3.1 Pro always thinks; its depth is set by `aiCommitAssistant.kimi.reasoningEffort`. For K2.6/K2.5 the extension disables thinking."
+        },
+        "aiCommitAssistant.kimi.reasoningEffort": {
+          "type": "string",
+          "default": "low",
+          "enum": [
+            "low",
+            "high",
+            "max"
+          ],
+          "order": 42,
+          "markdownDescription": "Reasoning effort for Kimi K3+ models, which always think. `low` is fastest; the API default would be `max`."
         },
         "aiCommitAssistant.kimi.baseUrl": {
           "type": "string",
           "default": "https://api.moonshot.ai/v1",
-          "order": 41,
+          "order": 43,
           "markdownDescription": "Kimi/Moonshot OpenAI-compatible API base URL."
         },
         "aiCommitAssistant.deepseek.model": {
           "type": "string",
-          "default": "deepseek-v4-flash",
+          "default": "deepseek-flash",
           "enum": [
-            "deepseek-v4-flash",
+            "deepseek-flash",
             "deepseek-v4-pro",
-            "deepseek-chat",
-            "deepseek-reasoner"
+            "deepseek-v4-flash"
           ],
           "enumItemLabels": [
-            "DeepSeek V4 Flash",
+            "DeepSeek V4.1 Flash (1017)",
             "DeepSeek V4 Pro",
-            "DeepSeek Chat",
-            "DeepSeek Reasoner"
+            "DeepSeek V4 Flash (legacy)"
           ],
           "markdownEnumDescriptions": [
-            "Default fast model.",
-            "Stronger reasoning/coding model.",
-            "Legacy alias, deprecated after 2026-07-24.",
-            "Legacy reasoning alias, deprecated after 2026-07-24."
+            "Latest Flash model, version DeepSeek-V4.1-Flash-1017. Default.",
+            "Stronger reasoning/coding model (DeepSeek-V4-Pro-0813).",
+            "Retired name; requests are now served by DeepSeek-V4.1-Flash-1017."
           ],
           "order": 50,
-          "markdownDescription": "DeepSeek model used when provider is `deepseek`. The extension disables thinking mode for commit-message generation so the API returns a normal final message."
+          "markdownDescription": "DeepSeek model used when provider is `deepseek`. Thinking is controlled by `aiCommitAssistant.deepseek.reasoningEffort`."
+        },
+        "aiCommitAssistant.deepseek.reasoningEffort": {
+          "type": "string",
+          "default": "none",
+          "enum": [
+            "none",
+            "low",
+            "high",
+            "max"
+          ],
+          "enumItemLabels": [
+            "None (thinking off)",
+            "Low",
+            "High",
+            "Max"
+          ],
+          "order": 52,
+          "markdownDescription": "Thinking for DeepSeek models. `none` turns thinking off (fastest and cheapest, the default); other values enable thinking with that effort."
         },
         "aiCommitAssistant.deepseek.baseUrl": {
           "type": "string",
           "default": "https://api.deepseek.com",
-          "order": 51,
+          "order": 53,
           "markdownDescription": "DeepSeek OpenAI-compatible API base URL."
         },
         "aiCommitAssistant.gemini.model": {

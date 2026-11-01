@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.0.9
+
+- New default models:
+  - Anthropic: `claude-haiku-5-5` (Claude Haiku 5.5) with `low` effort.
+  - OpenAI: `gpt-6-luna` (GPT-6 Luna) with `medium` reasoning effort.
+  - DeepSeek: `deepseek-flash` (DeepSeek-V4.1-Flash-1017), thinking off by default. `deepseek-v4-flash` is retired upstream and kept as a legacy option; `deepseek-chat`/`deepseek-reasoner` were removed.
+  - Kimi: `kimi-k3.1-pro` (Kimi K3.1 Pro) with `low` reasoning effort; `kimi-k3.1-pro-highspeed` added.
+- New effort settings: `anthropic.effort`, `openai.reasoningEffort`, `kimi.reasoningEffort`, `deepseek.reasoningEffort`.
+- The output-token budget grows with the effort level so reasoning cannot crowd out the message.
+- Kimi K3+ never receives a `thinking` parameter (unsupported) and uses `max_completion_tokens`.
+- Requests self-heal in both directions between `max_tokens` and `max_completion_tokens`.
+
 ## 0.0.8
 
 - **Detailed commit messages**: new `commitStyle` setting (default `detailed`) produces a Conventional Commits subject plus a bulleted body covering every meaningful change. `concise` keeps the old one-line behavior.

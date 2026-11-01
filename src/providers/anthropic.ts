@@ -4,6 +4,7 @@ type AnthropicOpts = {
   apiKey: string;
   baseUrl: string;
   model: string;
+  effort?: string;
   temperature: number;
   maxTokens: number;
   system: string;
@@ -13,21 +14,25 @@ type AnthropicOpts = {
 
 /** Claude Opus 4.7+ and the Claude 5 family reject sampling parameters such as temperature. */
 const NO_SAMPLING_MODELS = /^claude-(opus-4-[7-9]|(opus|sonnet|haiku|fable|mythos)-[5-9])/;
-/** Claude 5 family models think by default; keep effort low and leave room for thinking tokens. */
+/** Claude 5 family models think by default; leave room for thinking tokens. */
 const THINKING_BY_DEFAULT_MODELS = /^claude-(opus|sonnet|haiku|fable|mythos)-[5-9]/;
+/** Models that accept `output_config.effort`. */
+const EFFORT_MODELS = /^claude-(opus-4-[5-9]|(opus|sonnet|haiku|fable|mythos)-[5-9])/;
 
 export async function callAnthropic(opts: AnthropicOpts): Promise<ProviderResult> {
   const url = new URL("/v1/messages", opts.baseUrl).toString();
   const thinking = THINKING_BY_DEFAULT_MODELS.test(opts.model);
+  const effort = EFFORT_MODELS.test(opts.model) ? opts.effort?.trim() || "low" : undefined;
+  const thinkingFloor = { low: 4096, medium: 8192, high: 16384 }[effort ?? "low"] ?? 32000;
 
   const body: Record<string, unknown> = {
     model: opts.model,
-    max_tokens: thinking ? Math.max(opts.maxTokens, 4096) : opts.maxTokens,
+    max_tokens: thinking ? Math.max(opts.maxTokens, thinkingFloor) : opts.maxTokens,
     system: opts.system,
     messages: [{ role: "user", content: opts.user }],
   };
   if (!NO_SAMPLING_MODELS.test(opts.model)) body.temperature = opts.temperature;
-  if (thinking) body.output_config = { effort: "low" };
+  if (effort) body.output_config = { effort };
 
   const headers = { "x-api-key": opts.apiKey, "anthropic-version": "2023-06-01" };
 

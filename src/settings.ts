@@ -19,23 +19,28 @@ export function getConfig() {
     contextMaxCharsPerFile: cfg.get<number>("context.maxCharsPerFile", 4000),
     contextRecentCommits: cfg.get<number>("context.recentCommits", 10),
     anthropic: {
-      model: cfg.get<string>("anthropic.model", "claude-haiku-4-5-20251001"),
+      model: cfg.get<string>("anthropic.model", "claude-haiku-5-5"),
+      effort: cfg.get<string>("anthropic.effort", "low"),
       baseUrl: cfg.get<string>("anthropic.baseUrl", "https://api.anthropic.com"),
     },
     openai: {
-      model: cfg.get<string>("openai.model", "gpt-4o-mini"),
+      model: cfg.get<string>("openai.model", "gpt-6-luna"),
+      effort: cfg.get<string>("openai.reasoningEffort", "medium"),
       baseUrl: cfg.get<string>("openai.baseUrl", "https://api.openai.com"),
     },
     kimi: {
-      model: cfg.get<string>("kimi.model", "kimi-k2.6"),
+      model: cfg.get<string>("kimi.model", "kimi-k3.1-pro"),
+      effort: cfg.get<string>("kimi.reasoningEffort", "low"),
       baseUrl: cfg.get<string>("kimi.baseUrl", "https://api.moonshot.ai/v1"),
     },
     deepseek: {
-      model: cfg.get<string>("deepseek.model", "deepseek-v4-flash"),
+      model: cfg.get<string>("deepseek.model", "deepseek-flash"),
+      effort: cfg.get<string>("deepseek.reasoningEffort", "none"),
       baseUrl: cfg.get<string>("deepseek.baseUrl", "https://api.deepseek.com"),
     },
     gemini: {
       model: cfg.get<string>("gemini.model", "gemini-2.5-flash"),
+      effort: "low",
       baseUrl: cfg.get<string>("gemini.baseUrl", "https://generativelanguage.googleapis.com/v1beta/openai"),
     },
   };

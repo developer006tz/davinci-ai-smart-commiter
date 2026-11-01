@@ -17,11 +17,15 @@ Refs: ACC-142
 
 Supported providers:
 
-- Anthropic Claude (`claude-haiku-4-5-20251001` by default)
-- OpenAI (`gpt-4o-mini` by default)
-- Kimi/Moonshot (`kimi-k2.6` by default)
-- DeepSeek (`deepseek-v4-flash` by default)
-- Google Gemini (`gemini-2.5-flash` by default)
+| Provider | Default model | Default effort | Effort setting |
+| --- | --- | --- | --- |
+| Anthropic Claude | `claude-haiku-5-5` (Claude Haiku 5.5) | `low` | `aiCommitAssistant.anthropic.effort` |
+| OpenAI | `gpt-6-luna` (GPT-6 Luna) | `medium` | `aiCommitAssistant.openai.reasoningEffort` |
+| Kimi/Moonshot | `kimi-k3.1-pro` (Kimi K3.1 Pro) | `low` | `aiCommitAssistant.kimi.reasoningEffort` |
+| DeepSeek | `deepseek-flash` (DeepSeek-V4.1-Flash-1017) | `none` (thinking off) | `aiCommitAssistant.deepseek.reasoningEffort` |
+| Google Gemini | `gemini-2.5-flash` | `low` | — |
+
+If you previously picked a model with the Setup command, that choice is kept; run `Davinci AI Smart Commiter: Select Default Model` to switch to the new defaults.
 
 ## Usage
 
@@ -64,9 +68,9 @@ See `Settings` -> `Davinci AI Smart Commiter`.
 
 Start with `Davinci AI Smart Commiter: Setup Provider, Model, and API Key`. In Settings, provider and model fields are dropdowns, so normal setup does not require typing model names manually. API keys are stored securely through the `Set ... API Key` commands instead of plain Settings JSON.
 
-Kimi note: for `kimi-k2.6` and `kimi-k2.5`, the extension disables thinking mode when generating commit messages. Kimi enables thinking by default, which can consume the short commit-message token budget before returning final `content`.
+Kimi note: Kimi K3.1 Pro always thinks; the extension sends `reasoning_effort` (default `low`, the API's own default is `max`). For `kimi-k2.6` and `kimi-k2.5`, the extension disables thinking.
 
-DeepSeek note: for DeepSeek V4 models, the extension also disables thinking mode when generating commit messages. The commit workflow needs a final `content` value, not reasoning-only output.
+DeepSeek note: `deepseek-flash` is the official API name for DeepSeek-V4.1-Flash-1017. With `deepseek.reasoningEffort` = `none` the extension disables thinking; any other value enables thinking with that effort.
 
 Commit style:
 
@@ -82,7 +86,7 @@ Useful context settings:
 - `aiCommitAssistant.context.recentCommits` (default 10)
 - `aiCommitAssistant.requestTimeoutSeconds` (default 90)
 
-Model notes: Claude Opus 4.7+, Claude 5 models, OpenAI GPT-5/o-series and Kimi K2.5+ do not accept a custom `temperature`; the extension omits it and also adapts automatically if a provider rejects a parameter. Thinking/reasoning models (Claude 5, GPT-5, Gemini 2.5) run with low effort and at least 4096 output tokens.
+Model notes: Claude Opus 4.7+, Claude 5 models, OpenAI GPT-5/o-series and Kimi K2.5+ do not accept a custom `temperature`; the extension omits it and also adapts automatically if a provider rejects a parameter. Thinking/reasoning models get an output-token budget that scales with effort (low 4096, medium 8192, high 16384, higher 32000) so reasoning cannot crowd out the message.
 
 ## Author
 
