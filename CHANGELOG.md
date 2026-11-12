@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0
+
+- Rewritten prompt: the model first works out what the change does (reading docs and specs first) and writes a subject naming the outcome, a summary paragraph, 2 to 8 key points grouped by concern, and an optional closing paragraph for side fixes. No more one bullet per file, no "Added ..." bullets, no filler words.
+- The commit type follows the purpose of the change: tests that come with a feature never make it a `test` commit, and test files are never listed as bullets.
+- New change overview sent to the model: files by kind (source, migrations, config, docs, tests, generated) and the areas touched, largest first.
+- Smarter diff budget for large changes: docs and specs first, then migrations and config, then source. Test files are reduced to their test names (unless only tests changed), and trimmed files keep their declarations. The diff now always fits `diff.maxChars`.
+- Test files are no longer used as surrounding file context.
+- The body is wrapped at 72 columns, with bullet continuations indented.
+
 ## 0.0.9
 
 - New default models:

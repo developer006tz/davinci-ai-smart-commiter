@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { fitDiff, roleOf } from "./analyze";
 
 const execFileAsync = promisify(execFile);
 
@@ -139,13 +140,10 @@ export function isNoisyDiffFile(file: string): boolean {
   return NOISY_DIFF_PATTERNS.some((pattern) => pattern.test(file));
 }
 
-/**
- * Returns the staged diff, excluding lock/generated files, fitted into `maxChars`
- * by giving every file a fair share instead of cutting off the tail of the diff.
- */
 export async function getStagedDiff(
   repoRoot: string,
   maxChars: number,
+  testsOnly: boolean,
 ): Promise<{ diff: string; truncated: boolean }> {
   const excludes = NOISY_DIFF_GLOBS.map((glob) => `:(glob,exclude)${glob}`);
   const raw = await git(repoRoot, [
@@ -160,43 +158,8 @@ export async function getStagedDiff(
     ".",
     ...excludes,
   ]);
-  return fitDiffToBudget(raw, maxChars);
-}
-
-export function fitDiffToBudget(raw: string, maxChars: number): { diff: string; truncated: boolean } {
   if (raw.length <= maxChars) return { diff: raw, truncated: false };
-
-  const sections = raw.split(/^(?=diff --git )/m).filter((s) => s.length > 0);
-  const caps = waterFill(
-    sections.map((s) => s.length),
-    maxChars,
-  );
-
-  const parts = sections.map((section, idx) => {
-    const cap = caps[idx];
-    if (section.length <= cap) return section;
-    // Cut at a line boundary so hunks stay readable.
-    let cut = section.lastIndexOf("\n", Math.max(0, cap - 1));
-    if (cut < Math.min(200, cap / 2)) cut = Math.max(0, cap);
-    const omitted = section.length - cut;
-    return `${section.slice(0, cut)}\n[... ${omitted} more characters of this file's diff omitted ...]\n`;
-  });
-
-  return { diff: parts.join(""), truncated: true };
-}
-
-/** Max-min fair allocation: small sections stay whole, large ones share what's left equally. */
-function waterFill(sizes: number[], budget: number): number[] {
-  const order = sizes.map((size, idx) => ({ size, idx })).sort((a, b) => a.size - b.size);
-  const caps = new Array<number>(sizes.length).fill(0);
-  let remaining = budget;
-  for (let i = 0; i < order.length; i++) {
-    const share = Math.floor(remaining / (order.length - i));
-    const take = Math.min(order[i].size, Math.max(share, 0));
-    caps[order[i].idx] = take;
-    remaining -= take;
-  }
-  return caps;
+  return fitDiff(raw, maxChars, testsOnly);
 }
 
 export async function getCurrentBranch(repoRoot: string): Promise<string | undefined> {
@@ -243,7 +206,7 @@ export async function getStagedFileContext(
   if (opts.maxFiles <= 0 || opts.maxChars <= 0 || opts.maxCharsPerFile <= 0) return "";
 
   const candidates = files
-    .filter((f) => (f.status === "M" || f.status === "R") && !f.binary && shouldReadFileContext(f.path))
+    .filter((f) => (f.status === "M" || f.status === "R") && !f.binary && roleOf(f.path) !== "test" && shouldReadFileContext(f.path))
     .sort((a, b) => (b.added ?? 0) + (b.deleted ?? 0) - ((a.added ?? 0) + (a.deleted ?? 0)));
 
   const chunks: string[] = [];

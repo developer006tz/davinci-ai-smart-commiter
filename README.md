@@ -3,17 +3,24 @@
 Generate detailed Conventional Commits messages from your staged git diff, for example:
 
 ```text
-feat(accounting): add export, lock date, and opening balances pages
+feat(realtime): add a WebSocket engine for live updates
 
-- Implemented Export.vue for exporting accounting data with a dialog and table.
-- Created LockDate.vue to manage the lock date for accounting entries, including form validation and error handling.
-- Added OpeningBalances.vue for managing opening balances with a structured table and validation.
-- Introduced new queries for handling export operations, including fetching companies and files.
-- Updated routing to include new settings for export, lock date, and opening balances.
-- Added tests for export functionality, including access control, validation, and job processing.
+One socket per workspace per tab. Writes publish signals through
+pg_notify inside their transaction, a LISTEN runner fans them out to
+the connected tabs, and the browser refetches.
+
+- Tickets: 30 s single use, stored as sha256, sent as a subprotocol,
+  never in the URL
+- Topics: user and account joined automatically, company topics
+  authorized per module
+- Notify runs in a savepoint, so a failed notify never aborts the write
+
+Also fixes the admin workspace never running module install.
 
 Refs: ACC-142
 ```
+
+The message describes what the change does, not which files it touched. Before writing, the extension sorts the staged files into source, migrations, config, docs and tests and tells the model which areas changed. Docs and specs come first, because they explain why the change was made. Tests that come with a feature never become the commit type or its bullets. On a large diff, test files are reduced to their test names, and large source files to their declarations.
 
 Supported providers:
 
@@ -74,7 +81,7 @@ DeepSeek note: `deepseek-flash` is the official API name for DeepSeek-V4.1-Flash
 
 Commit style:
 
-- `aiCommitAssistant.commitStyle`: `detailed` (default; subject + bullet body) or `concise` (subject line only). Also available via `Davinci AI Smart Commiter: Select Commit Message Style`.
+- `aiCommitAssistant.commitStyle`: `detailed` (default; subject, summary paragraph, key points) or `concise` (subject line only). Also available via `Davinci AI Smart Commiter: Select Commit Message Style`.
 - `aiCommitAssistant.customInstructions`: extra rules, e.g. `Allowed scopes: api, web, accounting` or `Write bullets in imperative mood`.
 
 Useful context settings:

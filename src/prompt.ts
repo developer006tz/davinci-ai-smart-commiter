@@ -1,62 +1,88 @@
 import type { CommitStyle } from "./settings";
 import type { StagedFile } from "./git";
+import type { ChangeShape } from "./analyze";
+
+const UNDERSTAND = [
+  "First work out what this change DOES, before writing anything:",
+  "- Read the docs, specs, README, CHANGELOG and project instructions in the diff first. They state the intent in the author's own words.",
+  "- Then read the source changes. Ask: what can a user or developer do now that they could not before, or what was broken and is now fixed?",
+  "- Tests, fixtures, docs and config that come with a change are evidence for it, not the change itself.",
+  "- Think in features, decisions and behavior, never in files. Twenty files can be one feature; one file can hold two fixes.",
+];
 
 const TYPE_RULES = [
-  "- type: one of feat, fix, refactor, perf, test, docs, style, build, ci, chore, revert.",
-  "  Pick the type of the DOMINANT change (a new feature that also adds tests and docs is still `feat`).",
-  "- scope: the main module, feature, or area affected (e.g. accounting, auth, api, settings).",
-  "  Infer it from directory/feature names and reuse the scope names seen in recent commits when they fit.",
-  "  Omit the scope (and its parentheses) when the change spans several unrelated areas.",
+  "- type: feat, fix, refactor, perf, test, docs, style, build, ci, chore or revert, chosen by the PURPOSE of the change.",
+  "  New capability is `feat`, even when most added lines are tests. Use `test` only when nothing but tests changed,",
+  "  `docs` only when nothing but documentation changed, `chore`/`build` only for tooling with no behavior change.",
+  "- scope: the one module or feature the change is about (e.g. auth, accounting, realtime). Reuse scope names from the",
+  "  recent commits when one fits. Leave the scope out when the change is spread over unrelated areas.",
 ];
 
 const DETAILED_RULES = [
-  "You are an expert software engineer who writes precise, informative git commit messages",
-  "following the Conventional Commits 1.0 specification.",
+  "You are a senior engineer writing the commit message a careful maintainer would write by hand,",
+  "in the Conventional Commits format. A reader of `git log` must understand what changed and why",
+  "without opening the diff.",
   "",
-  "Goal: someone reading `git log` must understand WHAT changed and WHY without opening the diff.",
+  ...UNDERSTAND,
   "",
-  "Message structure:",
+  "Format:",
   "<type>(<scope>): <subject>",
   "",
-  "<body>",
+  "<summary paragraph>",
   "",
-  "<optional footer(s)>",
+  "- <key point>",
+  "- <key point>",
   "",
-  "Subject line rules:",
+  "<optional closing paragraph>",
+  "",
+  "<optional footers>",
+  "",
+  "Subject:",
   ...TYPE_RULES,
-  "- subject: imperative mood (\"add\", not \"added\"), lowercase first word, no trailing period.",
-  "  Summarize the overall change and name the 2-3 most important things. Keep the whole line <= 80 characters.",
+  "- subject: imperative mood (\"add\", not \"added\"), lowercase first word, no trailing period, at most 72 characters",
+  "  for the whole line. Name the outcome, e.g. \"add a WebSocket engine for live updates\", not the files or the tests.",
   "",
-  "Body rules:",
-  "- A bulleted list. Every bullet starts with \"- \" followed by a past-tense verb",
-  "  (Added, Implemented, Created, Introduced, Updated, Enhanced, Fixed, Refactored, Renamed, Moved, Removed).",
-  "- Cover EVERY meaningful change in the diff: new files, components, pages, classes, functions, API endpoints,",
-  "  queries, routes, database migrations, configuration, dependencies, tests, and removed code.",
-  "  Walk through the \"Changed files\" list so that nothing important is left out.",
-  "- Be specific: name the components, files, functions, endpoints, or settings involved and say what they do",
-  "  or how behavior changed. Example: \"- Created LockDate.vue to manage the accounting lock date, including form",
-  "  validation and error handling.\"",
-  "- Group closely related small edits into one bullet. Order bullets from most to least important.",
-  "- Scale with the change: 1-3 bullets for a small change, up to about 12 for a large one.",
-  "  One sentence per bullet, no nested bullets, no blank lines between bullets.",
-  "- Mention fixes and the problem they solve when a bug fix is visible.",
-  "- Never invent anything the diff does not support. Skip pure formatting/whitespace edits unless that is the whole change.",
-  "- For a trivial change (typo, one-line tweak) you may omit the body entirely.",
+  "Summary paragraph (always, except for a trivial one-line change):",
+  "- One to three plain sentences: what the change does and how it works at a high level, and why when the diff or docs",
+  "  say why. Write it for a teammate, not a changelog robot.",
   "",
-  "Footer rules:",
-  "- If the change breaks a public API, configuration, data format, or existing behavior, put \"!\" before the colon",
-  "  in the subject and add a footer: \"BREAKING CHANGE: <what breaks and how to migrate>\".",
-  "- If an issue reference is provided, add a footer: \"Refs: <reference>\".",
+  "Key points:",
+  "- 2 to 8 bullets for the important parts of the design or behavior: new concepts, rules and limits, security",
+  "  decisions, data model changes, API or route changes, user-visible behavior, what is reused or replaced.",
+  "- Group by concern, not by file. A bullet may start with a short label and a colon (\"- Tickets: 30 s single use,",
+  "  stored as sha256\"). Use concrete names (functions, endpoints, tables, settings, values) in backticks when they help.",
+  "- Present tense or noun phrases. Do not start bullets with \"Added\", \"Implemented\", \"Created\" or \"Introduced\".",
+  "- Never one bullet per file, never a bullet per test file, never a list of the tests. If tests matter, one short",
+  "  clause is enough (\"covered by feature tests for each module\"), or nothing.",
+  "- Do not mention docs, comments, formatting or lock files unless they are the whole change.",
+  "",
+  "Closing paragraph (only when it applies):",
+  "- Things a reviewer must know that are not the main change: an unrelated bug fixed on the way (\"Also fixes ...\"),",
+  "  a migration to run, a behavior that changed for existing users, where the change is visible (\"Live in: ...\").",
+  "",
+  "Footers:",
+  "- Breaking change of a public API, config, data format or behavior: \"!\" before the colon and",
+  "  \"BREAKING CHANGE: <what breaks and how to migrate>\".",
+  "- When an issue reference is given: \"Refs: <reference>\".",
+  "",
+  "Style:",
+  "- Plain, direct English. No filler: never \"various\", \"several improvements\", \"ensure\", \"enhance\", \"robust\",",
+  "  \"seamless\", \"comprehensive\", \"this commit\". Say the actual thing.",
+  "- Wrap lines at 72 characters; continuation lines of a bullet are indented by two spaces.",
+  "- Never invent anything the diff does not show. If part of the diff was trimmed, rely on the overview, the file list",
+  "  and the declarations shown.",
+  "- Scale with the change: a typo fix is one subject line; a large feature gets the full structure.",
 ];
 
 const CONCISE_RULES = [
-  "You are an expert software engineer who writes precise git commit messages",
-  "following the Conventional Commits 1.0 specification.",
+  "You are a senior engineer writing a one-line commit message in the Conventional Commits format.",
+  "",
+  ...UNDERSTAND,
   "",
   "Write ONE line only: <type>(<scope>): <subject>",
   ...TYPE_RULES,
-  "- subject: imperative mood, lowercase first word, no trailing period, <= 90 characters.",
-  "  Summarize the overall change and name the most important things it does.",
+  "- subject: imperative mood, lowercase first word, no trailing period, at most 72 characters.",
+  "  Name the outcome of the change, not the files or the tests.",
   "- Use \"!\" before the colon for breaking changes.",
 ];
 
@@ -76,6 +102,7 @@ export function buildSystemPrompt(style: CommitStyle, customInstructions?: strin
 
 export type PromptInput = {
   files: StagedFile[];
+  shape: ChangeShape;
   diff: string;
   diffTruncated: boolean;
   omittedDiffFiles: string[];
@@ -100,7 +127,11 @@ export function buildUserPrompt(input: PromptInput): string {
     );
   }
 
-  sections.push(`Changed files (${input.files.length}):`, formatFileList(input.files), "");
+  sections.push(`Overview of the change (${input.files.length} files):`, input.shape.overview, "");
+  if (input.shape.testsOnly) sections.push("Only tests changed: this is a `test` commit.", "");
+  if (input.shape.docsOnly) sections.push("Only documentation changed: this is a `docs` commit.", "");
+
+  sections.push(`Changed files:`, formatFileList(input.files), "");
 
   const context = input.fileContext?.trim();
   if (context) {
@@ -116,7 +147,7 @@ export function buildUserPrompt(input: PromptInput): string {
     notes.push(`diff omitted for lock/generated files: ${input.omittedDiffFiles.join(", ")}`);
   }
   if (input.diffTruncated) {
-    notes.push("some large file diffs were trimmed; rely on the file list and visible hunks for the rest");
+    notes.push("trimmed to fit: docs and source come first, test files show only their test names, large files show their declarations");
   }
   sections.push(`Staged diff${notes.length ? ` (${notes.join("; ")})` : ""}:`, input.diff.trim() || "(no textual diff)");
 

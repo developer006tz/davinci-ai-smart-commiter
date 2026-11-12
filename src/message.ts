@@ -53,5 +53,34 @@ export function normalizeCommitMessage(raw: string, style: CommitStyle, truncate
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 
-  return body ? `${subject}\n\n${body}` : subject;
+  return body ? `${subject}\n\n${wrapBody(body)}` : subject;
+}
+
+const WIDTH = 72;
+const FOOTER = /^(BREAKING[ -]CHANGE|[A-Za-z][A-Za-z-]*)(: | #)/;
+
+function wrapBody(body: string): string {
+  return body
+    .split("\n")
+    .flatMap((line) => {
+      if (line.length <= WIDTH || FOOTER.test(line) || /^\s{4,}/.test(line)) return [line];
+      const bullet = line.match(/^(\s*- )/);
+      const lead = bullet ? bullet[1] : (line.match(/^\s*/)?.[0] ?? "");
+      const indent = " ".repeat(lead.length);
+      const words = line.slice(lead.length).split(/ +/);
+      const out: string[] = [];
+      let current = lead;
+      for (const word of words) {
+        const prefix = out.length ? indent : lead;
+        if (current.length > prefix.length && current.length + 1 + word.length > WIDTH) {
+          out.push(current);
+          current = indent + word;
+        } else {
+          current = current.length > prefix.length ? `${current} ${word}` : current + word;
+        }
+      }
+      out.push(current);
+      return out;
+    })
+    .join("\n");
 }

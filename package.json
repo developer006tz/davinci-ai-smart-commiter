@@ -1,8 +1,8 @@
 {
   "name": "davinci-ai-smart-commiter",
   "displayName": "Davinci AI Smart Commiter",
-  "description": "Generate detailed Conventional Commits messages (subject + bullet body) from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
-  "version": "0.0.9",
+  "description": "Generate Conventional Commits messages that explain what a change does and why, from your staged git diff using Claude, OpenAI, Kimi, DeepSeek, or Gemini.",
+  "version": "0.1.0",
   "publisher": "local",
   "author": {
     "name": "Ludovick Konyo",
@@ -130,11 +130,11 @@
             "concise"
           ],
           "enumItemLabels": [
-            "Detailed (subject + bullet body)",
+            "Detailed (subject, summary, key points)",
             "Concise (subject line only)"
           ],
           "markdownEnumDescriptions": [
-            "Conventional Commits subject plus a bulleted body that lists every meaningful change (new files, components, queries, routes, tests, config...).",
+            "Conventional Commits subject, a short summary of what the change does and why, and bullets for the key parts of the design, wrapped at 72 columns.",
             "A single Conventional Commits subject line."
           ],
           "order": 2,
@@ -174,7 +174,7 @@
           "default": 50000,
           "minimum": 2000,
           "order": 8,
-          "markdownDescription": "Maximum characters of the staged diff sent to the model. When the diff is larger, every file gets a fair share (small files stay whole, big files are trimmed) so no file is ignored. Lock files, minified files, source maps and snapshots are never sent."
+          "markdownDescription": "Maximum characters of the staged diff sent to the model. When the diff is larger, docs and specs come first, then migrations and config, then source; test files show only their test names and large files show their declarations, so no file is ignored. Lock files, minified files, source maps and snapshots are never sent."
         },
         "aiCommitAssistant.context.maxFiles": {
           "type": "number",

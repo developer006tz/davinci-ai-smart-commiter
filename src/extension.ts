@@ -12,6 +12,7 @@ import {
   isNoisyDiffFile,
 } from "./git";
 import { buildSystemPrompt, buildUserPrompt } from "./prompt";
+import { describeChange } from "./analyze";
 import { normalizeCommitMessage } from "./message";
 import { generateCommitMessage } from "./providers";
 import { getConfig, type ProviderName } from "./settings";
@@ -84,7 +85,7 @@ async function selectCommitStyle() {
       {
         label: "Detailed",
         description: current === "detailed" ? "current" : undefined,
-        detail: "Subject line + bullet-point body describing every meaningful change (recommended)",
+        detail: "Subject, a summary of what the change does and why, and its key points (recommended)",
         style: "detailed" as const,
       },
       {
@@ -244,8 +245,9 @@ async function generate(context: vscode.ExtensionContext, arg?: unknown) {
           return;
         }
 
+        const shape = describeChange(files);
         const [{ diff, truncated: diffTruncated }, fileContext, branch, recentCommits] = await Promise.all([
-          getStagedDiff(repoRoot, config.diffMaxChars),
+          getStagedDiff(repoRoot, config.diffMaxChars, shape.testsOnly),
           getStagedFileContext(repoRoot, files, {
             maxFiles: config.contextMaxFiles,
             maxChars: config.contextMaxChars,
@@ -257,6 +259,7 @@ async function generate(context: vscode.ExtensionContext, arg?: unknown) {
 
         const user = buildUserPrompt({
           files,
+          shape,
           diff,
           diffTruncated,
           omittedDiffFiles: files.filter((f) => isNoisyDiffFile(f.path)).map((f) => f.path),
