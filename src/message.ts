@@ -59,9 +59,23 @@ export function normalizeCommitMessage(raw: string, style: CommitStyle, truncate
 const WIDTH = 72;
 const FOOTER = /^(BREAKING[ -]CHANGE|[A-Za-z][A-Za-z-]*)(: | #)/;
 
+function unwrap(body: string): string[] {
+  const out: string[] = [];
+  for (const line of body.split("\n")) {
+    const last = out.length ? out[out.length - 1] : "";
+    const startsNew =
+      !line.trim() || /^\s*- /.test(line) || FOOTER.test(line) || /^\s{4,}/.test(line) || /^\s*```/.test(line);
+    if (!startsNew && last.trim() && !FOOTER.test(last) && !/^\s{4,}/.test(last) && !/^\s*```/.test(last)) {
+      out[out.length - 1] = `${last} ${line.trim()}`;
+    } else {
+      out.push(line);
+    }
+  }
+  return out;
+}
+
 function wrapBody(body: string): string {
-  return body
-    .split("\n")
+  return unwrap(body)
     .flatMap((line) => {
       if (line.length <= WIDTH || FOOTER.test(line) || /^\s{4,}/.test(line)) return [line];
       const bullet = line.match(/^(\s*- )/);

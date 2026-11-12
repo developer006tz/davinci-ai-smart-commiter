@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Fix: lines the model had already wrapped were wrapped again, leaving single words on their own line. Paragraphs and bullets are now joined first, then wrapped once at 72 columns; footers and code stay as they are.
+
 ## 0.1.0
 
 - Rewritten prompt: the model first works out what the change does (reading docs and specs first) and writes a subject naming the outcome, a summary paragraph, 2 to 8 key points grouped by concern, and an optional closing paragraph for side fixes. No more one bullet per file, no "Added ..." bullets, no filler words.
